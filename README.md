@@ -50,23 +50,22 @@ python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task c
 
 HED Edge to Image Generation:
 ```
-CUDA_VISIBLE_DEVICES=2 python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task hed 
+python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task hed 
 ```
 
 HED-like Skech to Image Generation:
 ```
-CUDA_VISIBLE_DEVICES=0 python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task hedsketch
+python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task hedsketch
 ```
-
 
 Depth Map to Image Generation:
 ```
-CUDA_VISIBLE_DEVICES=3 python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task depth 
+python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task depth 
 ```
 
 Normal Surface Map to Image Generation:
 ```
-CUDA_VISIBLE_DEVICES=4 python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task normal
+python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task normal
 ```
 
 Segmentation Map to Image Generation:
@@ -76,17 +75,17 @@ python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task s
 
 Human Skeleton to Image Generation:
 ```
-CUDA_VISIBLE_DEVICES=1 python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task openpose
+python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task openpose
 ```
 
 Object Bounding Boxes to Image Generation:
 ```
-CUDA_VISIBLE_DEVICES=2 python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task bbox
+python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task bbox
 ```
 
 Image Outpainting:
 ```
-CUDA_VISIBLE_DEVICES=3 python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task outpainting
+python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task outpainting
 ```
 
 
@@ -116,8 +115,24 @@ then the model checkpoint will be saved at "lightning_logs/version_$num" and ima
     - [x] Bbox-to-image
     - [x] Image-outpainting
 - [ ] Model Training
+- [ ] Gradio Demo
 - [ ] Zero-shot Tasks Inference
 - [ ] Jupyter Notebook
+
+
+## Citation
+If you find this project useful for your research, please kindly cite our paper:
+
+```bibtex
+
+```
+
+## Acknowledgement
+Stable Diffusion https://github.com/CompVis/stable-diffusion
+
+ControlNet https://github.com/lllyasviel/ControlNet
+
+StyleGAN3 https://github.com/NVlabs/stylegan3
 
 
 
