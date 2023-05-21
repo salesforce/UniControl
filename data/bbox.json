@@ -1,0 +1,4 @@
+{"source": "./coco_sel/000000340175.jpg", "prompt": "The large room has a wooden table with chairs and a couch.", "control_bbox": "bbox/control_40175.jpg"}
+{"source": "./coco_sel/000000453860.jpg", "prompt": "two black bags placed standing on the ground", "control_bbox": "bbox/control_53860.jpg"}
+{"source": "./coco_sel/000000512836.jpg", "prompt": "A woman is walking two dogs in the snow. ", "control_bbox": "bbox/control_12836.jpg"}
+{"source": "./aesthetics_6_plus_6_300_512plus/source_217.jpg", "prompt": "Simone Righi frasi glasses linen suit menswear streetstyle icon fashion florence.jpg", "control_bbox": "bbox/control_217.jpg"}

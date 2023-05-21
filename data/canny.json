@@ -1,0 +1,6 @@
+{"source": "./coco_sel/000000087875.jpg", "prompt": "a fire hydrant near a tall bush in a field ", "control_canny": "canny/control_87875.jpg"}
+{"source": "./coco_sel/000000550426.jpg", "prompt": "A vase of flowers on a dining table.", "control_canny": "canny/control_50426.jpg"}
+{"source": "./coco_sel/000000127182.jpg", "prompt": "A KITCHEN WITH A SINK AND APPLIANCES ", "control_canny": "canny/control_27182.jpg"}
+{"source": "./aesthetics_6_plus_6_300_512plus/source_592.jpg", "prompt": "Breath of the Wild compressed cover art", "control_canny": "canny/control_592.jpg"}
+{"source": "./coco_sel/000000524456.jpg", "prompt": "two arms typing on a laptop and one hand on a mouse", "control_canny": "canny/control_24456.jpg"}
+{"source": "./coco_sel/000000000785.jpg", "prompt": "a person on skis makes her way through the snow", "control_canny": "canny/control_00785.jpg"}

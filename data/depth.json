@@ -1,0 +1,7 @@
+{"source": "./coco_sel/000000572517.jpg", "prompt": "A Polar Bear walks toward water, while a large bird lands on the opposite bank.", "control_depth": "depth/control_72517.jpg"}
+{"source": "./coco_sel/000000113403.jpg", "prompt": "Three stuffed animals lay in a bed cuddled together.", "control_depth": "depth/control_13403.jpg"}
+{"source": "./coco_sel/000000109798.jpg", "prompt": "Donuts with frosting and glazed toppings sit on table next to coffee maker", "control_depth": "depth/control_09798.jpg"}
+{"source": "./coco_sel/000000368294.jpg", "prompt": "A woman working with a pair of scissors as she makes cigars.", "control_depth": "depth/control_68294.jpg"}
+{"source": "./aesthetics_6_plus_6_300_512plus/source_223.jpg", "prompt": "Giraffes in Lake Manyara national park", "control_depth": "depth/control_223.jpg"}
+{"source": "./coco_sel/000000180560.jpg", "prompt": "a person holding a small cake with candles", "control_depth": "depth/control_80560.jpg"}
+{"source": "./coco_sel/000000301135.jpg", "prompt": "A group of women sitting on a bench near a light pole.", "control_depth": "depth/control_01135.jpg"}

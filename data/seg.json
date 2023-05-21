@@ -1,0 +1,6 @@
+{"source": "./aesthetics_6_plus_6_300_512plus/source_83.jpg", "prompt": "Blue Hour Barley", "control_seg": "segbase/control_83.jpg"}
+{"source": "./aesthetics_6_plus_6_300_512plus/source_386.jpg", "prompt": "Picture of Industrial Live Edge Dining Set Azulfurnishing", "control_seg": "segbase/control_386.jpg"}
+{"source": "./coco_sel/000000366141.jpg", "prompt": "Cat sitting on recliner back in room facing the television", "control_seg": "segbase/control_66141.jpg"}
+{"source": "./coco_sel/000000389381.jpg", "prompt": "One tray of rice and a tray of fruits and veggies.", "control_seg": "segbase/control_89381.jpg"}
+{"source": "./coco_sel/000000031269.jpg", "prompt": "three zebras grazing in a grassy area near shrubs", "control_seg": "segbase/control_31269.jpg"}
+{"source": "./coco_sel/000000375015.jpg", "prompt": "A brown bear walking in its zoo enclosure", "control_seg": "segbase/control_75015.jpg"}
