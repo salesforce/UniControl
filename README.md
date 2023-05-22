@@ -95,76 +95,82 @@ python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task o
 
 ### Gradio Demo (CUDA 11.0 and Conda 4.12.0 work)
 
-
 <div align="center">
-    <a><img src="figs/gradio_canny.png"  height="200px" ></a>
+    <a><img src="figs/gradio_canny.png"  height="300px" ></a>
 </div>
 
 Canny to Image Generation:
 ```
 python gradio_canny2image.py
-
 ```
 
 <div align="center">
-    <a><img src="figs/gradio_hed.png"  height="200px" ></a>
+    <a><img src="figs/gradio_hed.png"  height="300px" ></a>
 </div>
+
 HED Edge to Image Generation:
 ```
 python gradio_hed2image.py
 ```
 
 <div align="center">
-    <a><img src="figs/gradio_hedsketch.png"  height="200px" ></a>
+    <a><img src="figs/gradio_hedsketch.png"  height="300px" ></a>
 </div>
+
 HED-like Skech to Image Generation:
 ```
 python gradio_hedsketch2image.py
 ```
 
 <div align="center">
-    <a><img src="figs/gradio_depth.png"  height="200px" ></a>
+    <a><img src="figs/gradio_depth.png"  height="300px" ></a>
 </div>
+
 Depth Map to Image Generation:
 ```
 python gradio_depth2image.py
 ```
 
 <div align="center">
-    <a><img src="figs/gradio_normal.png"  height="200px" ></a>
+    <a><img src="figs/gradio_normal.png"  height="300px" ></a>
 </div>
+
 Normal Surface Map to Image Generation:
 ```
 python gradio_normal2image.py
 ```
 
 <div align="center">
-    <a><img src="figs/gradio_seg.png"  height="200px" ></a>
+    <a><img src="figs/gradio_seg.png"  height="300px" ></a>
 </div>
+
 For segmentation map to image generation, Please download [upernet_global_base.pth](https://drive.google.com/file/d/14bEgmFbTijBoTKTwny_aCJlARs6z31mP/view) as `./annotator/ckpts/upernet_global_base.pth`. Then, run: 
 ```
 python gradio_seg2image.py
 ```
 
 <div align="center">
-    <a><img src="figs/gradio_pose.png"  height="200px" ></a>
+    <a><img src="figs/gradio_pose.png"  height="300px" ></a>
 </div>
+
 Human Skeleton to Image Generation:
 ```
 python gradio_pose2image.py
 ```
 
 <div align="center">
-    <a><img src="figs/gradio_bbox.png"  height="200px" ></a>
+    <a><img src="figs/gradio_bbox.png"  height="300px" ></a>
 </div>
+
 Object Bounding Boxes to Image Generation:
 ```
 python gradio_bbox2image.py
 ```
 
 <div align="center">
-    <a><img src="figs/gradio_outpainting.png"  height="200px" ></a>
+    <a><img src="figs/gradio_outpainting.png"  height="300px" ></a>
 </div>
+
 Image Outpainting:
 ```
 python gradio_outpainting.py
