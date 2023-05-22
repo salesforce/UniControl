@@ -28,7 +28,7 @@ conda activate unicontrol
 ### Checkpoint Preparation
 If you want to train from scratch, please follow the ControlNet to prepare the checkpoint initialization.
 
-ControlNet provides a simple script for you to achieve this easily. If your SD filename is "./models/v1-5-pruned.ckpt" and you want the script to save the processed model (SD+ControlNet) at location "./models/control_sd15_ini.ckpt", you can just run:
+ControlNet provides a simple script for you to achieve this easily. If your SD filename is `./models/v1-5-pruned.ckpt` and you want the script to save the processed model (SD+ControlNet) at location `./models/control_sd15_ini.ckpt`, you can just run:
 
     python tool_add_control.py ./models/v1-5-pruned.ckpt ./models/control_sd15_ini.ckpt
 
@@ -94,6 +94,7 @@ python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task o
 ```
 
 ### Gradio Demo (CUDA 11.0 and Conda 4.12.0 work)
+We have provided gradio demos for different tasks to use. The example images are saved at `./test_imgs`
 
 <div align="center">
     <a><img src="figs/gradio_canny.png"  height="300px" ></a>
