@@ -8,6 +8,7 @@ from annotator.uniformer.mmseg.apis import init_segmentor, inference_segmentor, 
 from annotator.uniformer.mmseg.core.evaluation import get_palette
 from annotator.util import annotator_ckpts_path
 
+import pdb
 
 checkpoint_file = "https://huggingface.co/lllyasviel/ControlNet/resolve/main/annotator/ckpts/upernet_global_small.pth"
 
@@ -23,5 +24,6 @@ class UniformerDetector:
 
     def __call__(self, img):
         result = inference_segmentor(self.model, img)
+        
         res_img = show_result_pyplot(self.model, img, result, get_palette('ade'), opacity=1)
         return res_img

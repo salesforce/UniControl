@@ -12,14 +12,14 @@ dependencies:
   - pip:
       - gradio==3.16.2
       - albumentations==1.3.0
-      - opencv-contrib-python==4.3.0.36
+      - opencv-contrib-python==4.7.0.72
       - imageio==2.9.0
       - imageio-ffmpeg==0.4.2
       - pytorch-lightning==1.5.0
       - omegaconf==2.1.1
       - test-tube>=0.7.5
       - streamlit==1.12.1
-      - einops==0.3.0
+      - einops==0.6.1
       - transformers==4.19.2
       - webdataset==0.2.5
       - kornia==0.6
@@ -35,3 +35,5 @@ dependencies:
       - basicsr==1.4.2
       - jsonlines
       - diffusers==0.10.2
+      - cvlib==0.2.7
+      - tensorflow-cpu

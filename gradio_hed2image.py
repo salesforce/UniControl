@@ -1,3 +1,13 @@
+'''
+ * Copyright (c) 2023 Salesforce, Inc.
+ * All rights reserved.
+ * SPDX-License-Identifier: Apache License 2.0
+ * For full license text, see LICENSE.txt file in the repo root or http://www.apache.org/licenses/
+ * By Can Qin
+ * Modified from ControlNet repo: https://github.com/lllyasviel/ControlNet
+ * Copyright (c) 2023 Lvmin Zhang and Maneesh Agrawala
+'''
+
 from share import *
 import config
 
@@ -94,7 +104,7 @@ with block:
                 strength = gr.Slider(label="Control Strength", minimum=0.0, maximum=2.0, value=1.0, step=0.01)
                 guess_mode = gr.Checkbox(label='Guess Mode', value=False)
                 detect_resolution = gr.Slider(label="HED Resolution", minimum=128, maximum=1024, value=512, step=1)
-                ddim_steps = gr.Slider(label="Steps", minimum=1, maximum=100, value=20, step=1)
+                ddim_steps = gr.Slider(label="Steps", minimum=1, maximum=100, value=30, step=1)
                 scale = gr.Slider(label="Guidance Scale", minimum=0.1, maximum=30.0, value=9.0, step=0.1)
                 seed = gr.Slider(label="Seed", minimum=-1, maximum=2147483647, step=1, randomize=True)
                 eta = gr.Number(label="eta (DDIM)", value=0.0)

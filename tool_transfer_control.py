@@ -1,3 +1,14 @@
+'''
+ * Copyright (c) 2023 Salesforce, Inc.
+ * All rights reserved.
+ * SPDX-License-Identifier: Apache License 2.0
+ * For full license text, see LICENSE.txt file in the repo root or http://www.apache.org/licenses/
+ * By Can Qin
+ * Modified from ControlNet repo: https://github.com/lllyasviel/ControlNet
+ * Copyright (c) 2023 Lvmin Zhang and Maneesh Agrawala
+'''
+
+
 path_sd15 = './models/v1-5-pruned.ckpt'
 path_sd15_with_control = './models/control_sd15_openpose.pth'
 path_input = './models/anything-v3-full.safetensors'

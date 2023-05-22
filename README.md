@@ -25,14 +25,10 @@ Setup the env first (need to wait a few minutes).
 conda env create -f environment.yaml
 conda activate unicontrol
 ```
-### Checkpoint Preparation (Only For Training)
-Then you need to decide which Stable Diffusion Model you want to control. In this example, we will just use standard SD1.5. You can download it from the [official page of Stability](https://huggingface.co/runwayml/stable-diffusion-v1-5/tree/main). You want the file ["v1-5-pruned.ckpt"](https://huggingface.co/runwayml/stable-diffusion-v1-5/tree/main).
+### Checkpoint Preparation
+If you want to train from scratch, please follow the ControlNet to prepare the checkpoint initialization.
 
-(Or ["v2-1_512-ema-pruned.ckpt"](https://huggingface.co/stabilityai/stable-diffusion-2-1-base/tree/main) if you are using SD2.)
-
-Note that all weights inside the ControlNet are also copied from SD so that no layer is trained from scratch, and you are still finetuning the entire model.
-
-We provide a simple script for you to achieve this easily. If your SD filename is "./models/v1-5-pruned.ckpt" and you want the script to save the processed model (SD+ControlNet) at location "./models/control_sd15_ini.ckpt", you can just run:
+ControlNet provides a simple script for you to achieve this easily. If your SD filename is "./models/v1-5-pruned.ckpt" and you want the script to save the processed model (SD+ControlNet) at location "./models/control_sd15_ini.ckpt", you can just run:
 
     python tool_add_control.py ./models/v1-5-pruned.ckpt ./models/control_sd15_ini.ckpt
 
@@ -40,10 +36,10 @@ Or if you are using SD2:
 
     python tool_add_control_sd21.py ./models/v2-1_512-ema-pruned.ckpt ./models/control_sd21_ini.ckpt
  
-The checkpoint of pre-trained model is saved at "laion400m-data/canqin/checkpoints_v1/ours_latest_acti.ckpt".
+The checkpoint of pre-trained UniControl model is saved at `laion400m-data/canqin/checkpoints_v1/ours_latest_acti.ckpt`.
     
 ### Data Preparation 
-need volume "laion400m-data-ssd" for tasks "canny, hed, seg, depth, normal, depth, openpose".
+The example inference data are saved at `./data` and `./test_imgs_CN`.
 
 ### Model Inference (CUDA 11.0 and Conda 4.12.0 work)
 For different tasks, please run the code as follows. If you meet OOM error, please decrease the "--num_samples".
@@ -79,34 +75,101 @@ Segmentation Map to Image Generation:
 python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task seg
 ```
 
+
 Human Skeleton to Image Generation:
 ```
 python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task openpose
 ```
+
 
 Object Bounding Boxes to Image Generation:
 ```
 python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task bbox
 ```
 
+
 Image Outpainting:
 ```
 python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task outpainting
 ```
 
+### Gradio Demo (CUDA 11.0 and Conda 4.12.0 work)
 
-### Model Training (CUDA 11.0 and Conda 4.12.0 work)
-For single task, please run the following code with your options of "task" and it will use GPU (DDP):
-```
-python train_single_task.py --task canny --checkpoint_path ./models/control_sd15_ini.ckpt
-```
-then the model checkpoint will be saved at "lightning_logs/version_$num" and image logger visualization will apprear in "image_log/train".
 
-For multi task, please run the following code with your options of "task" and it will use GPU (DDP):
+<div align="center">
+    <a><img src="figs/gradio_canny.png"  height="200px" ></a>
+</div>
+
+Canny to Image Generation:
 ```
-python train_multi_task_full.py
+python gradio_canny2image.py
+
 ```
-then the model checkpoint will be saved at "lightning_logs/version_$num" and image logger visualization will apprear in "image_log/train".
+
+<div align="center">
+    <a><img src="figs/gradio_hed.png"  height="200px" ></a>
+</div>
+HED Edge to Image Generation:
+```
+python gradio_hed2image.py
+```
+
+<div align="center">
+    <a><img src="figs/gradio_hedsketch.png"  height="200px" ></a>
+</div>
+HED-like Skech to Image Generation:
+```
+python gradio_hedsketch2image.py
+```
+
+<div align="center">
+    <a><img src="figs/gradio_depth.png"  height="200px" ></a>
+</div>
+Depth Map to Image Generation:
+```
+python gradio_depth2image.py
+```
+
+<div align="center">
+    <a><img src="figs/gradio_normal.png"  height="200px" ></a>
+</div>
+Normal Surface Map to Image Generation:
+```
+python gradio_normal2image.py
+```
+
+<div align="center">
+    <a><img src="figs/gradio_seg.png"  height="200px" ></a>
+</div>
+For segmentation map to image generation, Please download [upernet_global_base.pth](https://drive.google.com/file/d/14bEgmFbTijBoTKTwny_aCJlARs6z31mP/view) as `./annotator/ckpts/upernet_global_base.pth`. Then, run: 
+```
+python gradio_seg2image.py
+```
+
+<div align="center">
+    <a><img src="figs/gradio_pose.png"  height="200px" ></a>
+</div>
+Human Skeleton to Image Generation:
+```
+python gradio_pose2image.py
+```
+
+<div align="center">
+    <a><img src="figs/gradio_bbox.png"  height="200px" ></a>
+</div>
+Object Bounding Boxes to Image Generation:
+```
+python gradio_bbox2image.py
+```
+
+<div align="center">
+    <a><img src="figs/gradio_outpainting.png"  height="200px" ></a>
+</div>
+Image Outpainting:
+```
+python gradio_outpainting.py
+```
+
 
 ## To Do
 - [x] Data Preparation
@@ -120,17 +183,21 @@ then the model checkpoint will be saved at "lightning_logs/version_$num" and ima
     - [x] Human-Skeleton-to-image
     - [x] Bbox-to-image
     - [x] Image-outpainting
-- [ ] Model Training
-- [ ] Gradio Demo
+- [x] Gradio Demo
 - [ ] Zero-shot Tasks Inference
-- [ ] Jupyter Notebook
+- [ ] Model Training
 
 
 ## Citation
 If you find this project useful for your research, please kindly cite our paper:
 
 ```bibtex
-
+@article{qin2023unicontrol,
+  title={UniControl: A Unified Diffusion Model for Controllable Visual Generation In the Wild},
+  author={Qin, Can and Zhang, Shu and Yu, Ning and Feng, Yihao and Yang, Xinyi and Zhou, Yingbo and Wang, Huan and Niebles, Juan Carlos and Xiong, Caiming and Savarese, Silvio and others},
+  journal={arXiv preprint arXiv:2305.11147},
+  year={2023}
+}
 ```
 
 ## Acknowledgement

@@ -1,3 +1,13 @@
+'''
+ * Copyright (c) 2023 Salesforce, Inc.
+ * All rights reserved.
+ * SPDX-License-Identifier: Apache License 2.0
+ * For full license text, see LICENSE.txt file in the repo root or http://www.apache.org/licenses/
+ * By Can Qin
+ * Modified from ControlNet repo: https://github.com/lllyasviel/ControlNet
+ * Copyright (c) 2023 Lvmin Zhang and Maneesh Agrawala
+'''
+
 from share import *
 import config
 
@@ -52,13 +62,12 @@ def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resoluti
         
         cond = {"c_concat": [control], "c_crossattn": [model.get_learned_conditioning([prompt + ', ' + a_prompt] * num_samples)], "task": task_dic}
         
-#         cond = {"c_concat": [control], "c_crossattn": [model.get_learned_conditioning([prompt + ', ' + a_prompt] * num_samples)]}
         un_cond = {"c_concat": None if guess_mode else [control], "c_crossattn": [model.get_learned_conditioning([n_prompt] * num_samples)]}
         shape = (4, H // 8, W // 8)
 
         if config.save_memory:
             model.low_vram_shift(is_diffusing=True)
-
+            
 #         model.control_scales = [strength * (0.825 ** float(12 - i)) for i in range(13)] if guess_mode else ([strength] * 13)  # Magic number. IDK why. Perhaps because 0.825**12<0.01 but 0.826**12>0.01
         samples, intermediates = ddim_sampler.sample(ddim_steps, num_samples,
                                                      shape, cond, verbose=False, eta=eta,
@@ -72,7 +81,7 @@ def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resoluti
         x_samples = (einops.rearrange(x_samples, 'b c h w -> b h w c') * 127.5 + 127.5).cpu().numpy().clip(0, 255).astype(np.uint8)
 
         results = [x_samples[i] for i in range(num_samples)]
-    return [255 - detected_map] + results
+    return [detected_map] + results
 
 
 block = gr.Blocks().queue()
@@ -91,14 +100,13 @@ with block:
                 guess_mode = gr.Checkbox(label='Guess Mode', value=False)
                 low_threshold = gr.Slider(label="Canny low threshold", minimum=1, maximum=255, value=100, step=1)
                 high_threshold = gr.Slider(label="Canny high threshold", minimum=1, maximum=255, value=200, step=1)
-                ddim_steps = gr.Slider(label="Steps", minimum=1, maximum=100, value=20, step=1)
+                ddim_steps = gr.Slider(label="Steps", minimum=1, maximum=100, value=30, step=1)
                 scale = gr.Slider(label="Guidance Scale", minimum=0.1, maximum=30.0, value=9.0, step=0.1)
                 seed = gr.Slider(label="Seed", minimum=-1, maximum=2147483647, step=1, randomize=True)
                 eta = gr.Number(label="eta (DDIM)", value=0.0)
                 a_prompt = gr.Textbox(label="Added Prompt", value='best quality, extremely detailed')
                 n_prompt = gr.Textbox(label="Negative Prompt", value='')
-#                 n_prompt = gr.Textbox(label="Negative Prompt",
-#                                       value='longbody, lowres, bad anatomy, bad hands, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality')
+
         with gr.Column():
             result_gallery = gr.Gallery(label='Output', show_label=False, elem_id="gallery").style(grid=2, height='auto')
     ips = [input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, ddim_steps, guess_mode, strength, scale, seed, eta, low_threshold, high_threshold]

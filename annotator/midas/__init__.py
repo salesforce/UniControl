@@ -1,3 +1,13 @@
+'''
+ * Copyright (c) 2023 Salesforce, Inc.
+ * All rights reserved.
+ * SPDX-License-Identifier: Apache License 2.0
+ * For full license text, see LICENSE.txt file in the repo root or http://www.apache.org/licenses/
+ * By Can Qin
+ * Modified from ControlNet repo: https://github.com/lllyasviel/ControlNet
+ * Copyright (c) 2023 Lvmin Zhang and Maneesh Agrawala
+'''
+
 # Midas Depth Estimation
 # From https://github.com/isl-org/MiDaS
 # MIT LICENSE
@@ -12,9 +22,9 @@ from .api import MiDaSInference
 
 class MidasDetector:
     def __init__(self):
-        self.model = MiDaSInference(model_type="dpt_hybrid").cuda()
+        self.model = MiDaSInference(model_type="dpt_large").cuda()
 
-    def __call__(self, input_image, a=np.pi * 2.0, bg_th=0.1):
+    def __call__(self, input_image, a=np.pi * 0.2, bg_th=0.02):
         assert input_image.ndim == 3
         image_depth = input_image
         with torch.no_grad():

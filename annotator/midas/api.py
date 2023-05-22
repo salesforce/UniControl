@@ -1,3 +1,13 @@
+'''
+ * Copyright (c) 2023 Salesforce, Inc.
+ * All rights reserved.
+ * SPDX-License-Identifier: Apache License 2.0
+ * For full license text, see LICENSE.txt file in the repo root or http://www.apache.org/licenses/
+ * By Can Qin
+ * Modified from ControlNet repo: https://github.com/lllyasviel/ControlNet
+ * Copyright (c) 2023 Lvmin Zhang and Maneesh Agrawala
+'''
+
 # based on https://github.com/isl-org/MiDaS
 
 import cv2
@@ -14,14 +24,14 @@ from annotator.util import annotator_ckpts_path
 
 
 ISL_PATHS = {
-    "dpt_large": os.path.join(annotator_ckpts_path, "dpt_large-midas-2f21e586.pt"),
+    "dpt_large": os.path.join(annotator_ckpts_path, "dpt_large_384.pt"),
     "dpt_hybrid": os.path.join(annotator_ckpts_path, "dpt_hybrid-midas-501f0c75.pt"),
     "midas_v21": "",
     "midas_v21_small": "",
 }
 
-remote_model_path = "https://huggingface.co/lllyasviel/ControlNet/resolve/main/annotator/ckpts/dpt_hybrid-midas-501f0c75.pt"
-
+# remote_model_path = "https://huggingface.co/lllyasviel/ControlNet/resolve/main/annotator/ckpts/dpt_hybrid-midas-501f0c75.pt"
+remote_model_path = "https://github.com/isl-org/MiDaS/releases/download/v3/dpt_large_384.pt"
 
 def disabled_train(self, mode=True):
     """Overwrite model.train with this function to make sure train/eval mode
@@ -79,6 +89,10 @@ def load_model(model_type):
     # load network
     model_path = ISL_PATHS[model_type]
     if model_type == "dpt_large":  # DPT-Large
+        if not os.path.exists(model_path):
+            from basicsr.utils.download_util import load_file_from_url
+            load_file_from_url(remote_model_path, model_dir=annotator_ckpts_path)
+            
         model = DPTDepthModel(
             path=model_path,
             backbone="vitl16_384",
