@@ -37,11 +37,11 @@ Or if you are using SD2:
     python tool_add_control_sd21.py ./models/v2-1_512-ema-pruned.ckpt ./models/control_sd21_ini.ckpt
  
 The checkpoint of pre-trained UniControl model is saved at `./ckpts/unicontrol.ckpt`.
-    ```
-    mkdir ckpts
-    cd ckpts
-    wget https://storage.cloud.google.com/sfr-unicontrol-data-research/unicontrol.ckpt 
-    ```
+```
+mkdir ckpts
+cd ckpts
+wget https://storage.cloud.google.com/sfr-unicontrol-data-research/unicontrol.ckpt 
+```
 ### Data Preparation 
 The example inference data are saved at `./data` and `./test_imgs_CN`.
 
