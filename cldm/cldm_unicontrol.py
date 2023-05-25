@@ -205,26 +205,6 @@ class ControlNet(nn.Module):
         self.task_id_layernet.append(linear(time_embed_dim, model_channels))
         self.zero_convs = nn.ModuleList([self.make_zero_conv(model_channels)]) # ie, model_channels -> 320
         
-#         self.task_weight_all = nn.Parameter(torch.zeros(self.all_tasks_num,), requires_grad=True)
-        
-#         self.input_hint_block = TimestepEmbedSequential(
-#             conv_nd(dims, hint_channels, 16, 3, padding=1),
-#             nn.SiLU(),
-#             conv_nd(dims, 16, 16, 3, padding=1),
-#             nn.SiLU(),
-#             conv_nd(dims, 16, 32, 3, padding=1, stride=2),
-#             nn.SiLU(),
-#             conv_nd(dims, 32, 32, 3, padding=1),
-#             nn.SiLU(),
-#             conv_nd(dims, 32, 96, 3, padding=1, stride=2),
-#             nn.SiLU(),
-#             conv_nd(dims, 96, 96, 3, padding=1),
-#             nn.SiLU(),
-#             conv_nd(dims, 96, 256, 3, padding=1, stride=2),
-#             nn.SiLU(),
-#             zero_module(conv_nd(dims, 256, model_channels, 3, padding=1))
-#         ) 
-        
         
         self.input_hint_block_list_moe = nn.ModuleList([TimestepEmbedSequential(
             conv_nd(dims, hint_channels, 16, 3, padding=1),

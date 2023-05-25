@@ -60,8 +60,7 @@ def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resoluti
                 retry = 1
             else:
                 cnt += 1
-        
-            
+ 
         H, W, C = img.shape
 
         detected_map =  cv2.resize(detected_map, (W, H), interpolation=cv2.INTER_LINEAR) 
@@ -97,7 +96,6 @@ def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resoluti
                                                      shape, cond, verbose=False, eta=eta,
                                                      unconditional_guidance_scale=scale,
                                                      unconditional_conditioning=un_cond)
-
         if config.save_memory:
             model.low_vram_shift(is_diffusing=False)
 

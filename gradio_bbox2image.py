@@ -20,10 +20,8 @@ import random
 
 from pytorch_lightning import seed_everything
 from annotator.util import resize_image, HWC3
-from annotator.hed import HEDdetector
 from cldm.model import create_model, load_state_dict
 from cldm.ddim_unicontrol_hacked import DDIMSampler
-# from annotator.outpainting import Outpainter
 import cvlib as cv
 
 model = create_model('./models/cldm_v15_unicontrol.yaml').cpu()

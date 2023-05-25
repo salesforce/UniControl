@@ -36,8 +36,12 @@ Or if you are using SD2:
 
     python tool_add_control_sd21.py ./models/v2-1_512-ema-pruned.ckpt ./models/control_sd21_ini.ckpt
  
-The checkpoint of pre-trained UniControl model is saved at `laion400m-data/canqin/checkpoints_v1/ours_latest_acti.ckpt`.
-    
+The checkpoint of pre-trained UniControl model is saved at `./ckpts/unicontrol.ckpt`.
+    ```
+    mkdir ckpts
+    cd ckpts
+    wget https://storage.cloud.google.com/sfr-unicontrol-data-research/unicontrol.ckpt 
+    ```
 ### Data Preparation 
 The example inference data are saved at `./data` and `./test_imgs_CN`.
 
@@ -46,55 +50,64 @@ For different tasks, please run the code as follows. If you meet OOM error, plea
 
 Canny to Image Generation:
 ```
-python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task canny 
-
+python inference_demo.py --ckpt ./ckpts/unicontrol.ckpt --task canny 
 ```
 
 HED Edge to Image Generation:
 ```
-python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task hed 
+python inference_demo.py --ckpt ./ckpts/unicontrol.ckpt --task hed 
 ```
 
 HED-like Skech to Image Generation:
 ```
-python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task hedsketch
+python inference_demo.py --ckpt ./ckpts/unicontrol.ckpt --task hedsketch
 ```
 
 Depth Map to Image Generation:
 ```
-python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task depth 
+python inference_demo.py --ckpt ./ckpts/unicontrol.ckpt --task depth 
 ```
 
 Normal Surface Map to Image Generation:
 ```
-python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task normal
+python inference_demo.py --ckpt ./ckpts/unicontrol.ckpt --task normal
 ```
 
 Segmentation Map to Image Generation:
 ```
-python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task seg
+python inference_demo.py --ckpt ./ckpts/unicontrol.ckpt --task seg
 ```
 
 
 Human Skeleton to Image Generation:
 ```
-python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task openpose
+python inference_demo.py --ckpt ./ckpts/unicontrol.ckpt --task openpose
 ```
 
 
 Object Bounding Boxes to Image Generation:
 ```
-python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task bbox
+python inference_demo.py --ckpt ./ckpts/unicontrol.ckpt --task bbox
 ```
 
 
 Image Outpainting:
 ```
-python inference_demo.py --ckpt ../checkpoints_v1/ours_latest_acti.ckpt --task outpainting
+python inference_demo.py --ckpt ./ckpts/unicontrol.ckpt --task outpainting
 ```
 
 ### Gradio Demo (CUDA 11.0 and Conda 4.12.0 work)
 We have provided gradio demos for different tasks to use. The example images are saved at `./test_imgs`
+<div align="center">
+    <a><img src="figs/gradio_all_tasks.png"  height="300px" ></a>
+</div>
+
+For all the tasks, please run the following code. Please unmark the `Condition Extraction` if you want to upload condition image directly.
+```
+python gradio_all_tasks.py
+```
+
+Or, we provide the task-specifc gradio demos:
 
 <div align="center">
     <a><img src="figs/gradio_canny.png"  height="300px" ></a>
