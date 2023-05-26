@@ -18,15 +18,15 @@ from annotator.uniformer.mmseg.core.evaluation import get_palette
 from annotator.util import annotator_ckpts_path
 
 import pdb
-# checkpoint_file = "https://huggingface.co/lllyasviel/ControlNet/resolve/main/annotator/ckpts/upernet_global_small.pth"
+checkpoint_file = "https://storage.googleapis.com/sfr-unicontrol-data-research/annotator/ckpts/upernet_global_base.pth"
 
 class UniformerDetector:
     def __init__(self):
         modelpath = os.path.join(annotator_ckpts_path, "upernet_global_base.pth")
         if not os.path.exists(modelpath):
-#             from basicsr.utils.download_util import load_file_from_url
-#             load_file_from_url(checkpoint_file, model_dir=annotator_ckpts_path)
-            raise ValueError("wrong ckpt path")
+            from basicsr.utils.download_util import load_file_from_url
+            load_file_from_url(checkpoint_file, model_dir=annotator_ckpts_path)
+#             raise ValueError("wrong ckpt path")
             
         config_file = os.path.join(os.path.dirname(annotator_ckpts_path), "uniformer_base", "exp", "upernet_global_base", "config.py")
         self.model = init_segmentor(config_file, modelpath).cuda()

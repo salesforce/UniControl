@@ -30,7 +30,6 @@ import cvlib as cv
 
 from cldm.model import create_model, load_state_dict
 from cldm.ddim_unicontrol_hacked import DDIMSampler
-# from cldm.ddim_hacked import DDIMSampler
 import pdb
 
 apply_uniformer = UniformerDetector()
@@ -162,14 +161,6 @@ def process_hed(input_image, prompt, a_prompt, n_prompt, num_samples, image_reso
 
 def process_depth(input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, detect_resolution, ddim_steps, guess_mode, strength, scale, seed, eta, condition_mode):
     with torch.no_grad():
-#         input_image = HWC3(input_image)
-# #         detected_map, _ = midas(input_image, image_resolution)
-#         detected_map, _ = apply_midas(resize_image(input_image, image_resolution))
-# #         detected_map = HWC3(detected_map)
-#         img = resize_image(input_image, image_resolution)
-#         H, W, C = img.shape
-
-# #         detected_map = cv2.resize(detected_map, (W, H), interpolation=cv2.INTER_LINEAR)
         input_image = HWC3(input_image)
         img = resize_image(input_image, image_resolution)
         H, W, C = img.shape
@@ -220,13 +211,6 @@ def process_depth(input_image, prompt, a_prompt, n_prompt, num_samples, image_re
 
 def process_normal(input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, detect_resolution, ddim_steps, guess_mode, strength, scale, seed, eta, condition_mode):
     with torch.no_grad():
-#         input_image = HWC3(input_image)
-#         _, detected_map = apply_midas(resize_image(input_image, image_resolution))
-#         detected_map = HWC3(detected_map)
-# #         img = resize_image(input_image, image_resolution)
-#         H, W, C = input_image.shape
-
-#         detected_map = cv2.resize(detected_map, (W, H), interpolation=cv2.INTER_LINEAR)
         
         input_image = HWC3(input_image)
         img = resize_image(input_image, image_resolution)
