@@ -206,6 +206,4 @@ Apache License
    limitations under the License.
 
 ---------------------------------------------------------------------------------------
-WikiMatrix Dataset citation:
-Holger Schwenk, Vishrav Chaudhary, Shuo Sun, Hongyu Gong and Paco Guzman. WikiMatrix: Mining 135M Parallel Sentences in 1620 Language Pairs from Wikipedia. arXiv, July 11 2019.
-https://github.com/facebookresearch/LASER/tree/main/tasks/WikiMatrix
+In addition to the provisions of the Apache 2.0 license, your use of the model within this repo may be subject to the use-based restrictions referenced in paragraph 5 of the Open Rail M license, a copy of which may be found in [Stable Diffusion License](https://github.com/CompVis/stable-diffusion/blob/main/LICENSE) as part of the third-party dependency  [Stable Diffusion](https://github.com/CompVis/stable-diffusion/tree/main).
