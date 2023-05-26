@@ -98,17 +98,12 @@ python inference_demo.py --ckpt ./ckpts/unicontrol.ckpt --task outpainting
 
 ### Gradio Demo (CUDA 11.0 and Conda 4.12.0 work)
 We have provided gradio demos for different tasks to use. The example images are saved at `./test_imgs`. 
-<!-- <div align="center">
+<div align="center">
     <a><img src="figs/gradio_all_tasks.png"  height="300px" ></a>
-</div> -->
+</div>
 
 
-<video height="300" controls>
-    <source src="figs/gradio_video.mp4" type="video/mp4">
-</video>
-
-
-For all the tasks (`Canny, HED, Sketch, Depth, Normal, Human Pose, Seg, Bbox, Outpainting`) please run the following code. Please unmark the `Condition Extraction` in UI if you want to upload condition image directly.
+For all the tasks (`Canny, HED, Sketch, Depth, Normal, Human Pose, Seg, Bbox, Outpainting`) please run the following code. Please unmark the `Condition Extraction` in UI if you want to upload condition image directly. [App Demo Video](https://github.com/salesforce/UniControl/issues/1)
 ```
 python gradio_all_tasks.py
 ```
