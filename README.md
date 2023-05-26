@@ -97,15 +97,23 @@ python inference_demo.py --ckpt ./ckpts/unicontrol.ckpt --task outpainting
 ```
 
 ### Gradio Demo (CUDA 11.0 and Conda 4.12.0 work)
-We have provided gradio demos for different tasks to use. The example images are saved at `./test_imgs`. For segmentation map to image generation, Please download [upernet_global_base.pth](https://drive.google.com/file/d/14bEgmFbTijBoTKTwny_aCJlARs6z31mP/view) as `./annotator/ckpts/upernet_global_base.pth`.
-<div align="center">
+We have provided gradio demos for different tasks to use. The example images are saved at `./test_imgs`. 
+<!-- <div align="center">
     <a><img src="figs/gradio_all_tasks.png"  height="300px" ></a>
-</div>
+</div> -->
 
-For all the tasks, please run the following code. Please unmark the `Condition Extraction` if you want to upload condition image directly.
+
+```HTML
+<video height="300" controls>
+    <source src="figs/gradio_video.mp4" type="video/mp4">
+</video>
+```
+
+For all the tasks (`Canny, HED, Sketch, Depth, Normal, Human Pose, Seg, Bbox, Outpainting`) please run the following code. Please unmark the `Condition Extraction` in UI if you want to upload condition image directly.
 ```
 python gradio_all_tasks.py
 ```
+
 
 Or, we provide the task-specifc gradio demos:
 
