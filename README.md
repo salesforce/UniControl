@@ -26,6 +26,14 @@ conda env create -f environment.yaml
 conda activate unicontrol
 ```
 ### Checkpoint Preparation
+The checkpoint of pre-trained UniControl model is saved at `./ckpts/unicontrol.ckpt`.
+```
+mkdir ckpts
+cd ckpts
+wget https://storage.googleapis.com/sfr-unicontrol-data-research/unicontrol.ckpt 
+```
+
+<!-- 
 If you want to train from scratch, please follow the ControlNet to prepare the checkpoint initialization.
 
 ControlNet provides a simple script for you to achieve this easily. If your SD filename is `./models/v1-5-pruned.ckpt` and you want the script to save the processed model (SD+ControlNet) at location `./models/control_sd15_ini.ckpt`, you can just run:
@@ -34,16 +42,10 @@ ControlNet provides a simple script for you to achieve this easily. If your SD f
 
 Or if you are using SD2:
 
-    python tool_add_control_sd21.py ./models/v2-1_512-ema-pruned.ckpt ./models/control_sd21_ini.ckpt
+    python tool_add_control_sd21.py ./models/v2-1_512-ema-pruned.ckpt ./models/control_sd21_ini.ckpt -->
  
-The checkpoint of pre-trained UniControl model is saved at `./ckpts/unicontrol.ckpt`.
-```
-mkdir ckpts
-cd ckpts
-wget https://storage.googleapis.com/sfr-unicontrol-data-research/unicontrol.ckpt 
-```
 ### Data Preparation 
-The example inference data are saved at `./data` and `./test_imgs_CN`.
+The example inference data already are saved at `./data` and `./test_imgs_CN`.
 
 ### Model Inference (CUDA 11.0 and Conda 4.12.0 work)
 For different tasks, please run the code as follows. If you meet OOM error, please decrease the "--num_samples".
@@ -96,14 +98,13 @@ Image Outpainting:
 python inference_demo.py --ckpt ./ckpts/unicontrol.ckpt --task outpainting
 ```
 
-### Gradio Demo (CUDA 11.0 and Conda 4.12.0 work)
+### Gradio Demo ([App Demo Video](https://github.com/salesforce/UniControl/issues/1), CUDA 11.0 and Conda 4.12.0 work)
 We have provided gradio demos for different tasks to use. The example images are saved at `./test_imgs`. 
 <div align="center">
     <a><img src="figs/gradio_all_tasks.png"  height="300px" ></a>
 </div>
 
-
-For all the tasks (`Canny, HED, Sketch, Depth, Normal, Human Pose, Seg, Bbox, Outpainting`) please run the following code. Please unmark the `Condition Extraction` in UI if you want to upload condition image directly. [App Demo Video](https://github.com/salesforce/UniControl/issues/1)
+For all the tasks (`Canny, HED, Sketch, Depth, Normal, Human Pose, Seg, Bbox, Outpainting`) please run the following code. Please unmark the `Condition Extraction` in UI if you want to upload condition image directly. 
 ```
 python gradio_all_tasks.py
 ```
@@ -228,7 +229,4 @@ Stable Diffusion https://github.com/CompVis/stable-diffusion
 ControlNet https://github.com/lllyasviel/ControlNet
 
 StyleGAN3 https://github.com/NVlabs/stylegan3
-
-
-
     
