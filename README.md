@@ -40,7 +40,7 @@ The checkpoint of pre-trained UniControl model is saved at `./ckpts/unicontrol.c
 ```
 mkdir ckpts
 cd ckpts
-wget https://storage.cloud.google.com/sfr-unicontrol-data-research/unicontrol.ckpt 
+wget https://storage.googleapis.com/sfr-unicontrol-data-research/unicontrol.ckpt 
 ```
 ### Data Preparation 
 The example inference data are saved at `./data` and `./test_imgs_CN`.
@@ -97,7 +97,7 @@ python inference_demo.py --ckpt ./ckpts/unicontrol.ckpt --task outpainting
 ```
 
 ### Gradio Demo (CUDA 11.0 and Conda 4.12.0 work)
-We have provided gradio demos for different tasks to use. The example images are saved at `./test_imgs`
+We have provided gradio demos for different tasks to use. The example images are saved at `./test_imgs`. For segmentation map to image generation, Please download [upernet_global_base.pth](https://drive.google.com/file/d/14bEgmFbTijBoTKTwny_aCJlARs6z31mP/view) as `./annotator/ckpts/upernet_global_base.pth`.
 <div align="center">
     <a><img src="figs/gradio_all_tasks.png"  height="300px" ></a>
 </div>
@@ -158,7 +158,7 @@ python gradio_normal2image.py
     <a><img src="figs/gradio_seg.png"  height="300px" ></a>
 </div>
 
-For segmentation map to image generation, Please download [upernet_global_base.pth](https://drive.google.com/file/d/14bEgmFbTijBoTKTwny_aCJlARs6z31mP/view) as `./annotator/ckpts/upernet_global_base.pth`. Then, run: 
+Segmentation Map to Image Generation:
 ```
 python gradio_seg2image.py
 ```

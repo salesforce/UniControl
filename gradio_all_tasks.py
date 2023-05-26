@@ -51,7 +51,7 @@ def outpainting(img, res, rand_h, rand_w):
     return result
 
 model = create_model('./models/cldm_v15_unicontrol.yaml').cpu()
-model.load_state_dict(load_state_dict('../checkpoints_v1/unicontrol.ckpt', location='cuda'), strict=False)
+model.load_state_dict(load_state_dict('./ckpts/unicontrol.ckpt', location='cuda'), strict=False)
 model = model.cuda()
 ddim_sampler = DDIMSampler(model)
 
@@ -105,7 +105,7 @@ def process_canny(input_image, prompt, a_prompt, n_prompt, num_samples, image_re
         x_samples = (einops.rearrange(x_samples, 'b c h w -> b h w c') * 127.5 + 127.5).cpu().numpy().clip(0, 255).astype(np.uint8)
 
         results = [x_samples[i] for i in range(num_samples)]
-    return [detected_map] + results
+    return [255 - detected_map] + results
 
 def process_hed(input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, detect_resolution, ddim_steps, guess_mode, strength, scale, seed, eta, condition_mode):
     with torch.no_grad():
