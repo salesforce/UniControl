@@ -27,7 +27,7 @@ from cldm.ddim_unicontrol_hacked import DDIMSampler
 apply_canny = CannyDetector()
 
 model = create_model('./models/cldm_v15_unicontrol.yaml').cpu()
-model.load_state_dict(load_state_dict('../checkpoints_v1/ours_latest_acti.ckpt', location='cuda'), strict=False)
+model.load_state_dict(load_state_dict('./ckpts/unicontrol.ckpt', location='cuda'), strict=False)
 model = model.cuda()
 ddim_sampler = DDIMSampler(model)
 

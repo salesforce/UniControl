@@ -32,7 +32,7 @@ def outpainting(img, res, rand_h, rand_w):
     return result
 
 model = create_model('./models/cldm_v15_unicontrol.yaml').cpu()
-model.load_state_dict(load_state_dict('../checkpoints_v1/ours_latest_acti.ckpt', location='cuda'), strict=False)
+model.load_state_dict(load_state_dict('./ckpts/unicontrol.ckpt', location='cuda'), strict=False)
 model = model.cuda()
 ddim_sampler = DDIMSampler(model)
 
