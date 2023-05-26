@@ -103,11 +103,10 @@ We have provided gradio demos for different tasks to use. The example images are
 </div> -->
 
 
-```HTML
 <video height="300" controls>
     <source src="figs/gradio_video.mp4" type="video/mp4">
 </video>
-```
+
 
 For all the tasks (`Canny, HED, Sketch, Depth, Normal, Human Pose, Seg, Bbox, Outpainting`) please run the following code. Please unmark the `Condition Extraction` in UI if you want to upload condition image directly.
 ```
