@@ -25,7 +25,7 @@ Achieving machine autonomy and human control often represent divergent objective
 ## Updates
 * 05/18/23: [UniControl](https://arxiv.org/abs/2305.11147) paper uploaded to arXiv.
 * 05/26/23: UniControl inference code and checkpoint open to public.
-* 05/28/23: Latest UniControl model [checkpoint](https://console.cloud.google.com/storage/browser/_details/sfr-unicontrol-data-research/unicontrol.ckpt)(1.4B #params, 5.78GB) updated.
+* 05/28/23: Latest UniControl model [checkpoint](https://console.cloud.google.com/storage/browser/_details/sfr-unicontrol-data-research/unicontrol.ckpt) (1.4B #params, 5.78GB) updated.
 
 
 ## Instruction
@@ -227,7 +227,7 @@ python gradio_outpainting.py
 - [ ] Model Training
 
 ## Tips
-* Negative prompts are very useful in some cases: `monochrome, lowres, bad anatomy, worst quality, low quality` are example ones.
+* Negative prompts are very useful sometimes: `monochrome, lowres, bad anatomy, worst quality, low quality` are example negative prompts.
 
 
 ## Citation
