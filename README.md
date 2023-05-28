@@ -125,6 +125,7 @@ python gradio_all_tasks.py
 
 We support the direct condition-to-image generation (as shown above). Please unmark the `Condition Extraction` in UI if you want to upload condition image directly. 
 
+***
 
 Or, we provide the task-specifc gradio demos:
 
@@ -137,6 +138,8 @@ Canny to Image Generation:
 python gradio_canny2image.py
 ```
 
+***
+
 <div align="center">
     <a><img src="figs/gradio_hed.png"  height="450px" ></a>
 </div>
@@ -145,6 +148,8 @@ HED Edge to Image Generation:
 ```
 python gradio_hed2image.py
 ```
+
+***
 
 <div align="center">
     <a><img src="figs/gradio_hedsketch.png"  height="450px" ></a>
@@ -155,6 +160,8 @@ HED-like Skech to Image Generation:
 python gradio_hedsketch2image.py
 ```
 
+***
+
 <div align="center">
     <a><img src="figs/gradio_depth.png"  height="450px" ></a>
 </div>
@@ -163,6 +170,8 @@ Depth Map to Image Generation:
 ```
 python gradio_depth2image.py
 ```
+
+***
 
 <div align="center">
     <a><img src="figs/gradio_normal.png"  height="450px" ></a>
@@ -173,6 +182,8 @@ Normal Surface Map to Image Generation:
 python gradio_normal2image.py
 ```
 
+***
+
 <div align="center">
     <a><img src="figs/gradio_seg.png"  height="450px" ></a>
 </div>
@@ -181,6 +192,8 @@ Segmentation Map to Image Generation:
 ```
 python gradio_seg2image.py
 ```
+
+***
 
 <div align="center">
     <a><img src="figs/gradio_pose.png"  height="450px" ></a>
@@ -191,6 +204,8 @@ Human Skeleton to Image Generation:
 python gradio_pose2image.py
 ```
 
+***
+
 <div align="center">
     <a><img src="figs/gradio_bbox.png"  height="450px" ></a>
 </div>
@@ -199,6 +214,8 @@ Object Bounding Boxes to Image Generation:
 ```
 python gradio_bbox2image.py
 ```
+
+***
 
 <div align="center">
     <a><img src="figs/gradio_outpainting.png"  height="450px" ></a>
@@ -213,15 +230,6 @@ python gradio_outpainting.py
 ## To Do
 - [x] Data Preparation
 - [x] Pre-training Tasks Inference
-    - [x] Canny-to-image
-    - [x] HED-to-image
-    - [x] HEDSketch-to-image
-    - [x] Depth-to-image
-    - [x] Normal-to-image
-    - [x] Seg-to-image
-    - [x] Human-Skeleton-to-image
-    - [x] Bbox-to-image
-    - [x] Image-outpainting
 - [x] Gradio Demo
 - [ ] Zero-shot Tasks Inference
 - [ ] Model Training
