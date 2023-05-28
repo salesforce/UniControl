@@ -67,7 +67,7 @@ def process_canny(input_image, prompt, a_prompt, n_prompt, num_samples, image_re
             detected_map = apply_canny(img, low_threshold, high_threshold)
             detected_map = HWC3(detected_map)
         else:
-            detected_map = img
+            detected_map = 255 - img
 
         control = torch.from_numpy(detected_map.copy()).float().cuda() / 255.0
         control = torch.stack([control for _ in range(num_samples)], dim=0)

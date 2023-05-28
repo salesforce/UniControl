@@ -81,7 +81,7 @@ def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resoluti
         x_samples = (einops.rearrange(x_samples, 'b c h w -> b h w c') * 127.5 + 127.5).cpu().numpy().clip(0, 255).astype(np.uint8)
 
         results = [x_samples[i] for i in range(num_samples)]
-    return [detected_map] + results
+    return [255 - detected_map] + results
 
 
 block = gr.Blocks().queue()

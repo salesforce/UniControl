@@ -22,6 +22,11 @@ Achieving machine autonomy and human control often represent divergent objective
 
 ![img](figs/method.png)
 
+## Updates
+* 05/18/23: [UniControl](https://arxiv.org/abs/2305.11147) paper uploaded to arXiv.
+* 05/26/23: UniControl inference code and checkpoint is open to public.
+* 05/28/23: New UniControl checkpoint is updated.
+
 
 ## Instruction
 ### Environment Preparation
@@ -109,10 +114,16 @@ We have provided gradio demos for different tasks to use. The example images are
     <a><img src="figs/gradio_all_tasks.png"  height="300px" ></a>
 </div>
 
-For all the tasks (`Canny, HED, Sketch, Depth, Normal, Human Pose, Seg, Bbox, Outpainting`) please run the following code. Please unmark the `Condition Extraction` in UI if you want to upload condition image directly. 
+For all the tasks (`Canny, HED, Sketch, Depth, Normal, Human Pose, Seg, Bbox, Outpainting`) please run the following code: 
 ```
 python gradio_all_tasks.py
 ```
+
+<div align="center">
+    <a><img src="figs/gradio_all_task_sketch.png"  height="300px" ></a>
+</div>
+
+We support the direct condition-to-image generation (as shown above). Please unmark the `Condition Extraction` in UI if you want to upload condition image directly. 
 
 
 Or, we provide the task-specifc gradio demos:
@@ -215,6 +226,9 @@ python gradio_outpainting.py
 - [ ] Zero-shot Tasks Inference
 - [ ] Model Training
 
+## Tips
+* Negative prompts are very useful in some cases: `monochrome, lowres, bad anatomy, worst quality, low quality` are example ones.
+
 
 ## Citation
 If you find this project useful for your research, please kindly cite our paper:
@@ -229,9 +243,11 @@ If you find this project useful for your research, please kindly cite our paper:
 ```
 
 ## Acknowledgement
+*This project is built upon the gaint sholders of ControlNet and Stable Diffusion. Great thanks to them.*
+
 Stable Diffusion https://github.com/CompVis/stable-diffusion
 
-ControlNet https://github.com/lllyasviel/ControlNet
+ControlNet https://github.com/lllyasviel/ControlNet 
 
 StyleGAN3 https://github.com/NVlabs/stylegan3
     
