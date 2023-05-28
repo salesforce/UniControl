@@ -111,7 +111,7 @@ python inference_demo.py --ckpt ./ckpts/unicontrol.ckpt --task outpainting
 ### Gradio Demo ([App Demo Video](https://github.com/salesforce/UniControl/issues/1), CUDA 11.0 and Conda 4.12.0 work)
 We have provided gradio demos for different tasks to use. The example images are saved at `./test_imgs`. 
 <div align="center">
-    <a><img src="figs/gradio_all_tasks.png"  height="400px" ></a>
+    <a><img src="figs/gradio_all_tasks.png"  height="450px" ></a>
 </div>
 
 For all the tasks (`Canny, HED, Sketch, Depth, Normal, Human Pose, Seg, Bbox, Outpainting`) please run the following code: 
@@ -120,7 +120,7 @@ python gradio_all_tasks.py
 ```
 
 <div align="center">
-    <a><img src="figs/gradio_all_task_sketch.png"  height="400px" ></a>
+    <a><img src="figs/gradio_all_task_sketch.png"  height="450px" ></a>
 </div>
 
 We support the direct condition-to-image generation (as shown above). Please unmark the `Condition Extraction` in UI if you want to upload condition image directly. 
@@ -129,7 +129,7 @@ We support the direct condition-to-image generation (as shown above). Please unm
 Or, we provide the task-specifc gradio demos:
 
 <div align="center">
-    <a><img src="figs/gradio_canny.png"  height="400px" ></a>
+    <a><img src="figs/gradio_canny.png"  height="450px" ></a>
 </div>
 
 Canny to Image Generation:
@@ -138,7 +138,7 @@ python gradio_canny2image.py
 ```
 
 <div align="center">
-    <a><img src="figs/gradio_hed.png"  height="400px" ></a>
+    <a><img src="figs/gradio_hed.png"  height="450px" ></a>
 </div>
 
 HED Edge to Image Generation:
@@ -147,7 +147,7 @@ python gradio_hed2image.py
 ```
 
 <div align="center">
-    <a><img src="figs/gradio_hedsketch.png"  height="400px" ></a>
+    <a><img src="figs/gradio_hedsketch.png"  height="450px" ></a>
 </div>
 
 HED-like Skech to Image Generation:
@@ -156,7 +156,7 @@ python gradio_hedsketch2image.py
 ```
 
 <div align="center">
-    <a><img src="figs/gradio_depth.png"  height="400px" ></a>
+    <a><img src="figs/gradio_depth.png"  height="450px" ></a>
 </div>
 
 Depth Map to Image Generation:
@@ -165,7 +165,7 @@ python gradio_depth2image.py
 ```
 
 <div align="center">
-    <a><img src="figs/gradio_normal.png"  height="400px" ></a>
+    <a><img src="figs/gradio_normal.png"  height="450px" ></a>
 </div>
 
 Normal Surface Map to Image Generation:
@@ -174,7 +174,7 @@ python gradio_normal2image.py
 ```
 
 <div align="center">
-    <a><img src="figs/gradio_seg.png"  height="400px" ></a>
+    <a><img src="figs/gradio_seg.png"  height="450px" ></a>
 </div>
 
 Segmentation Map to Image Generation:
@@ -183,7 +183,7 @@ python gradio_seg2image.py
 ```
 
 <div align="center">
-    <a><img src="figs/gradio_pose.png"  height="400px" ></a>
+    <a><img src="figs/gradio_pose.png"  height="450px" ></a>
 </div>
 
 Human Skeleton to Image Generation:
@@ -192,7 +192,7 @@ python gradio_pose2image.py
 ```
 
 <div align="center">
-    <a><img src="figs/gradio_bbox.png"  height="400px" ></a>
+    <a><img src="figs/gradio_bbox.png"  height="450px" ></a>
 </div>
 
 Object Bounding Boxes to Image Generation:
@@ -201,7 +201,7 @@ python gradio_bbox2image.py
 ```
 
 <div align="center">
-    <a><img src="figs/gradio_outpainting.png"  height="400px" ></a>
+    <a><img src="figs/gradio_outpainting.png"  height="450px" ></a>
 </div>
 
 Image Outpainting:
@@ -243,7 +243,7 @@ If you find this project useful for your research, please kindly cite our paper:
 ```
 
 ## Acknowledgement
-*This project is built upon the gaint sholders of ControlNet and Stable Diffusion. Great thanks to them.*
+*This project is built upon the gaint sholders of ControlNet and Stable Diffusion. Great thanks to them!*
 
 Stable Diffusion https://github.com/CompVis/stable-diffusion
 
