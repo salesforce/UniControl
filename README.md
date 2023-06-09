@@ -17,7 +17,7 @@ This repository is for the paper:
 
 
 ## Introduction
-Achieving machine autonomy and human control often represent divergent objectives in the design of interactive AI systems. Visual generative foundation models such as Stable Diffusion show promise in navigating these goals, especially when prompted with arbitrary languages. However, they often fall short in generating images with spatial, structural, or geometric controls. The integration of such controls, which can accommodate various visual conditions in a single unified model, remains an unaddressed challenge. In response, we introduce UniControl, a new generative foundation model that consolidates a wide array of controllable condition-to-image (C2I) tasks within a singular framework, while still allowing for arbitrary language prompts. UniControl enables pixel-level-precise image generation, where visual conditions primarily influence the generated structures and language prompts guide the style and context. To equip UniControl with the capacity to handle diverse visual conditions, we augment pretrained text-to-image diffusion models and introduce a task-aware HyperNet to modulate the diffusion models, enabling the adaptation to different C2I tasks simultaneously. Trained on nine unique C2I tasks, UniControl demonstrates impressive zero-shot generation abilities with unseen visual conditions. Experimental results show that UniControl often surpasses the performance of single-task-controlled methods of comparable model sizes. This control versatility positions UniControl as a significant advancement in the realm of controllable visual generation. 
+We introduce UniControl, a new generative foundation model that consolidates a wide array of controllable condition-to-image (C2I) tasks within a singular framework, while still allowing for arbitrary language prompts. UniControl enables pixel-level-precise image generation, where visual conditions primarily influence the generated structures and language prompts guide the style and context. To equip UniControl with the capacity to handle diverse visual conditions, we augment pretrained text-to-image diffusion models and introduce a task-aware HyperNet to modulate the diffusion models, enabling the adaptation to different C2I tasks simultaneously. Experimental results show that UniControl often surpasses the performance of single-task-controlled methods of comparable model sizes. This control versatility positions UniControl as a significant advancement in the realm of controllable visual generation. 
 
 
 ![img](figs/method.png)
@@ -26,16 +26,16 @@ Achieving machine autonomy and human control often represent divergent objective
 
 
 ## Updates
-* 05/18/23: [UniControl](https://arxiv.org/abs/2305.11147) paper uploaded to arXiv.
-* 05/26/23: UniControl inference code and checkpoint open to public.
-* 05/28/23: Latest UniControl model [checkpoint](https://console.cloud.google.com/storage/browser/_details/sfr-unicontrol-data-research/unicontrol.ckpt) (1.4B #params, 5.78GB) updated.
-* 06/08/23: Latest UniControl model [checkpoint](https://console.cloud.google.com/storage/browser/_details/sfr-unicontrol-data-research/unicontrol.ckpt) updated which supports 12 tasks now (`Canny`, `HED`, `Sketch`, `Depth`, `Normal`, `Skeleton`, `Bbox`, `Seg`, `Outpainting`, `Inpainting`, `Deblurring` and `Colorization`) !
-* 06/08/23: Training dataset ([MultiGen-20M](https://console.cloud.google.com/storage/browser/sfr-unicontrol-data-research/dataset)) is fully released.
-* 06/08/23: Training code is public.
+* **05/18/23**: *** [UniControl](https://arxiv.org/abs/2305.11147) paper uploaded to arXiv. *** 
+* **05/26/23**: *** UniControl inference code and checkpoint open to public. *** 
+* **05/28/23**: *** Latest UniControl model [checkpoint](https://console.cloud.google.com/storage/browser/_details/sfr-unicontrol-data-research/unicontrol.ckpt) (1.4B #params, 5.78GB) updated. *** 
+* **06/08/23**: *** Latest UniControl model [checkpoint](https://console.cloud.google.com/storage/browser/_details/sfr-unicontrol-data-research/unicontrol.ckpt) updated which supports 12 tasks now (**Canny**, **HED**, **Sketch**, **Depth**, **Normal**, **Skeleton**, **Bbox**, **Seg**, **Outpainting**, **Inpainting**, **Deblurring** and **Colorization**) ! *** 
+* **06/08/23**: *** Training dataset ([MultiGen-20M](https://console.cloud.google.com/storage/browser/sfr-unicontrol-data-research/dataset)) is fully released. *** 
+* **06/08/23**: *** Training code is public. *** 
 
 
 ## MultiGen-20M Datasets
-There are over 20M image-prompt-triplets [here](https://console.cloud.google.com/storage/browser/sfr-unicontrol-data-research/dataset) with total size > 2TB. It includes all 12 tasks (`Canny`, `HED`, `Sketch`, `Depth`, `Normal`, `Skeleton`, `Bbox`, `Seg`, `Outpainting`, `Inpainting`, `Deblurring` and `Colorization`) which are fully released.
+There are more than 20M image-prompt-condition triplets [here](https://console.cloud.google.com/storage/browser/sfr-unicontrol-data-research/dataset) with total size **> 2TB**. It includes all 12 tasks (`Canny, HED, Sketch, Depth, Normal, Skeleton, Bbox, Seg, Outpainting, Inpainting, Deblurring, Colorization`) which are fully released.
 
 ## Instruction
 ### Environment Preparation
@@ -57,8 +57,6 @@ python tool_add_control.py ./ckpts/v1-5-pruned.ckpt ./ckpts/control_sd15_ini.ckp
 ```
 
 ### Data Preparation 
-The example inference data already are saved at `./data` and `./test_imgs_CN`.
-
 Please download the training dataset ([MultiGen-20M](https://console.cloud.google.com/storage/browser/sfr-unicontrol-data-research/dataset)) to `./multigen20m`. Please:
 ```
 cd multigen20m
@@ -66,7 +64,7 @@ gsutil cp -r gs://sfr-unicontrol-data-research/dataset ./
 ```
 Then unzip the all the files.
 
-### Model Training
+### Model Training (CUDA 11.0 and Conda 4.12.0 work)
 Training from Scratch:
 ``` 
 python train_unicontrol.py --ckpt ./ckpts/control_sd15_ini.ckpt --config ./models/cldm_v15_unicontrol_v11.yaml --lr 1e-5
