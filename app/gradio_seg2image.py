@@ -7,7 +7,9 @@
  * Modified from ControlNet repo: https://github.com/lllyasviel/ControlNet
  * Copyright (c) 2023 Lvmin Zhang and Maneesh Agrawala
 '''
+import sys
 
+sys.path.append('./')
 from share import *
 import config
 
@@ -20,12 +22,12 @@ import random
 
 from pytorch_lightning import seed_everything
 from annotator.util import resize_image, HWC3
-from annotator.openpose import OpenposeDetector
+from annotator.uniformer_base import UniformerDetector
 from cldm.model import create_model, load_state_dict
 from cldm.ddim_unicontrol_hacked import DDIMSampler
+# from cldm.ddim_hacked import DDIMSampler
 
-
-apply_openpose = OpenposeDetector()
+apply_uniformer = UniformerDetector()
 
 model = create_model('./models/cldm_v15_unicontrol.yaml').cpu()
 model.load_state_dict(load_state_dict('./ckpts/unicontrol.ckpt', location='cuda'), strict=False)
@@ -40,8 +42,7 @@ name_to_instruction = {"control_hed": "hed edge to image", "control_canny": "can
 def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, detect_resolution, ddim_steps, guess_mode, strength, scale, seed, eta):
     with torch.no_grad():
         input_image = HWC3(input_image)
-        detected_map, _ = apply_openpose(resize_image(input_image, detect_resolution))
-        detected_map = HWC3(detected_map)
+        detected_map = apply_uniformer(resize_image(input_image, detect_resolution))
         img = resize_image(input_image, image_resolution)
         H, W, C = img.shape
 
@@ -57,13 +58,13 @@ def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resoluti
 
         if config.save_memory:
             model.low_vram_shift(is_diffusing=False)
-        task = 'openpose'    
+        task = 'seg'    
         task_dic = {}
         task_dic['name'] = task_to_name[task]
         task_instruction = name_to_instruction[task_dic['name']]
         task_dic['feature'] = model.get_learned_conditioning(task_instruction)[:,:1,:]
+        
         cond = {"c_concat": [control], "c_crossattn": [model.get_learned_conditioning([prompt + ', ' + a_prompt] * num_samples)], "task": task_dic}
-
 #         cond = {"c_concat": [control], "c_crossattn": [model.get_learned_conditioning([prompt + ', ' + a_prompt] * num_samples)]}
         un_cond = {"c_concat": None if guess_mode else [control], "c_crossattn": [model.get_learned_conditioning([n_prompt] * num_samples)]}
         shape = (4, H // 8, W // 8)
@@ -71,7 +72,7 @@ def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resoluti
         if config.save_memory:
             model.low_vram_shift(is_diffusing=True)
 
-        model.control_scales = [strength * (0.825 ** float(12 - i)) for i in range(13)] if guess_mode else ([strength] * 13)  # Magic number. IDK why. Perhaps because 0.825**12<0.01 but 0.826**12>0.01
+#         model.control_scales = [strength * (0.825 ** float(12 - i)) for i in range(13)] if guess_mode else ([strength] * 13)  # Magic number. IDK why. Perhaps because 0.825**12<0.01 but 0.826**12>0.01
         samples, intermediates = ddim_sampler.sample(ddim_steps, num_samples,
                                                      shape, cond, verbose=False, eta=eta,
                                                      unconditional_guidance_scale=scale,
@@ -90,7 +91,7 @@ def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resoluti
 block = gr.Blocks().queue()
 with block:
     with gr.Row():
-        gr.Markdown("## UniControl Stable Diffusion with Human Pose")
+        gr.Markdown("## UniControl Stable Diffusion with Segmentation Maps")
     with gr.Row():
         with gr.Column():
             input_image = gr.Image(source='upload', type="numpy")
@@ -101,13 +102,13 @@ with block:
                 image_resolution = gr.Slider(label="Image Resolution", minimum=256, maximum=768, value=512, step=64)
                 strength = gr.Slider(label="Control Strength", minimum=0.0, maximum=2.0, value=1.0, step=0.01)
                 guess_mode = gr.Checkbox(label='Guess Mode', value=False)
-                detect_resolution = gr.Slider(label="OpenPose Resolution", minimum=128, maximum=1024, value=512, step=1)
+                detect_resolution = gr.Slider(label="Segmentation Resolution", minimum=128, maximum=1024, value=512, step=1)
                 ddim_steps = gr.Slider(label="Steps", minimum=1, maximum=100, value=30, step=1)
                 scale = gr.Slider(label="Guidance Scale", minimum=0.1, maximum=30.0, value=9.0, step=0.1)
                 seed = gr.Slider(label="Seed", minimum=-1, maximum=2147483647, step=1, randomize=True)
                 eta = gr.Number(label="eta (DDIM)", value=0.0)
                 a_prompt = gr.Textbox(label="Added Prompt", value='best quality, extremely detailed')
-                n_prompt = gr.Textbox(label="Negative Prompt", value='')
+                n_prompt = gr.Textbox(label="Negative Prompt",value='')
 #                 n_prompt = gr.Textbox(label="Negative Prompt",
 #                                       value='longbody, lowres, bad anatomy, bad hands, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality')
         with gr.Column():

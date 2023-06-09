@@ -7,7 +7,9 @@
  * Modified from ControlNet repo: https://github.com/lllyasviel/ControlNet
  * Copyright (c) 2023 Lvmin Zhang and Maneesh Agrawala
 '''
+import sys
 
+sys.path.append('./')
 from share import *
 import config
 
@@ -20,12 +22,11 @@ import random
 
 from pytorch_lightning import seed_everything
 from annotator.util import resize_image, HWC3
-from annotator.hed import HEDdetector
+from annotator.canny import CannyDetector
 from cldm.model import create_model, load_state_dict
 from cldm.ddim_unicontrol_hacked import DDIMSampler
-import pdb
 
-apply_hed = HEDdetector()
+apply_canny = CannyDetector()
 
 model = create_model('./models/cldm_v15_unicontrol.yaml').cpu()
 model.load_state_dict(load_state_dict('./ckpts/unicontrol.ckpt', location='cuda'), strict=False)
@@ -37,34 +38,14 @@ task_to_name = {'hed': 'control_hed', 'canny': 'control_canny', 'seg': 'control_
 name_to_instruction = {"control_hed": "hed edge to image", "control_canny": "canny edge to image", "control_seg": "segmentation map to image", "control_depth": "depth map to image", "control_normal": "normal surface map to image", "control_img": "image editing", "control_openpose": "human pose skeleton to image", "control_hedsketch": "sketch to image", "control_bbox": "bounding box to image", "control_outpainting": "image outpainting"}
 
 
-def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, detect_resolution, ddim_steps, guess_mode, strength, scale, seed, eta):
+def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, ddim_steps, guess_mode, strength, scale, seed, eta, low_threshold, high_threshold):
     with torch.no_grad():
-        input_image = HWC3(input_image)
-        detected_map = apply_hed(resize_image(input_image, detect_resolution))
-        
-        detected_map = HWC3(detected_map)
-        img = resize_image(input_image, image_resolution)
-        # sketch the hed image
-        retry = 0
-        cnt = 0
-        while retry == 0:
-            threshold_value = np.random.randint(110, 160)
-            kernel_size = 3
-            alpha = 1.5
-            beta = 0
-            binary_image = cv2.threshold(detected_map, threshold_value, 255, cv2.THRESH_BINARY)[1]
-            inverted_image = cv2.bitwise_not(binary_image)
-            detected_map = cv2.GaussianBlur(inverted_image, (kernel_size, kernel_size), 0)
-#             detected_map = cv2.convertScaleAbs(smoothed_image, alpha=alpha, beta=beta)
-            if np.sum(detected_map < 5) > 0.005 * detected_map.shape[0] * detected_map.shape[1] or cnt == 5:
-                retry = 1
-            else:
-                cnt += 1
- 
+        img = resize_image(HWC3(input_image), image_resolution)
         H, W, C = img.shape
 
-        detected_map =  cv2.resize(detected_map, (W, H), interpolation=cv2.INTER_LINEAR) 
-        
+        detected_map = apply_canny(img, low_threshold, high_threshold)
+        detected_map = HWC3(detected_map)
+
         control = torch.from_numpy(detected_map.copy()).float().cuda() / 255.0
         control = torch.stack([control for _ in range(num_samples)], dim=0)
         control = einops.rearrange(control, 'b h w c -> b c h w').clone()
@@ -75,8 +56,7 @@ def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resoluti
 
         if config.save_memory:
             model.low_vram_shift(is_diffusing=False)
-            
-        task = 'hedsketch'    
+        task = 'canny'    
         task_dic = {}
         task_dic['name'] = task_to_name[task]
         task_instruction = name_to_instruction[task_dic['name']]
@@ -84,18 +64,18 @@ def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resoluti
         
         cond = {"c_concat": [control], "c_crossattn": [model.get_learned_conditioning([prompt + ', ' + a_prompt] * num_samples)], "task": task_dic}
         
-#         cond = {"c_concat": [control], "c_crossattn": [model.get_learned_conditioning([prompt + ', ' + a_prompt] * num_samples)]}
         un_cond = {"c_concat": None if guess_mode else [control], "c_crossattn": [model.get_learned_conditioning([n_prompt] * num_samples)]}
         shape = (4, H // 8, W // 8)
 
         if config.save_memory:
             model.low_vram_shift(is_diffusing=True)
-
+            
 #         model.control_scales = [strength * (0.825 ** float(12 - i)) for i in range(13)] if guess_mode else ([strength] * 13)  # Magic number. IDK why. Perhaps because 0.825**12<0.01 but 0.826**12>0.01
         samples, intermediates = ddim_sampler.sample(ddim_steps, num_samples,
                                                      shape, cond, verbose=False, eta=eta,
                                                      unconditional_guidance_scale=scale,
                                                      unconditional_conditioning=un_cond)
+
         if config.save_memory:
             model.low_vram_shift(is_diffusing=False)
 
@@ -103,13 +83,13 @@ def process(input_image, prompt, a_prompt, n_prompt, num_samples, image_resoluti
         x_samples = (einops.rearrange(x_samples, 'b c h w -> b h w c') * 127.5 + 127.5).cpu().numpy().clip(0, 255).astype(np.uint8)
 
         results = [x_samples[i] for i in range(num_samples)]
-    return [detected_map] + results
+    return [255 - detected_map] + results
 
 
 block = gr.Blocks().queue()
 with block:
     with gr.Row():
-        gr.Markdown("## UniControl Stable Diffusion with HEDSketch Maps")
+        gr.Markdown("## UniControl Stable Diffusion with Canny Edge Maps")
     with gr.Row():
         with gr.Column():
             input_image = gr.Image(source='upload', type="numpy")
@@ -120,18 +100,18 @@ with block:
                 image_resolution = gr.Slider(label="Image Resolution", minimum=256, maximum=768, value=512, step=64)
                 strength = gr.Slider(label="Control Strength", minimum=0.0, maximum=2.0, value=1.0, step=0.01)
                 guess_mode = gr.Checkbox(label='Guess Mode', value=False)
-                detect_resolution = gr.Slider(label="HED Resolution", minimum=128, maximum=1024, value=512, step=1)
+                low_threshold = gr.Slider(label="Canny low threshold", minimum=1, maximum=255, value=100, step=1)
+                high_threshold = gr.Slider(label="Canny high threshold", minimum=1, maximum=255, value=200, step=1)
                 ddim_steps = gr.Slider(label="Steps", minimum=1, maximum=100, value=30, step=1)
                 scale = gr.Slider(label="Guidance Scale", minimum=0.1, maximum=30.0, value=9.0, step=0.1)
                 seed = gr.Slider(label="Seed", minimum=-1, maximum=2147483647, step=1, randomize=True)
                 eta = gr.Number(label="eta (DDIM)", value=0.0)
                 a_prompt = gr.Textbox(label="Added Prompt", value='best quality, extremely detailed')
                 n_prompt = gr.Textbox(label="Negative Prompt", value='')
-#                 n_prompt = gr.Textbox(label="Negative Prompt",
-#                                       value='longbody, lowres, bad anatomy, bad hands, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality')
+
         with gr.Column():
             result_gallery = gr.Gallery(label='Output', show_label=False, elem_id="gallery").style(grid=2, height='auto')
-    ips = [input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, detect_resolution, ddim_steps, guess_mode, strength, scale, seed, eta]
+    ips = [input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, ddim_steps, guess_mode, strength, scale, seed, eta, low_threshold, high_threshold]
     run_button.click(fn=process, inputs=ips, outputs=[result_gallery])
 
 

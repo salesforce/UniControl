@@ -26,7 +26,13 @@ Achieving machine autonomy and human control often represent divergent objective
 * 05/18/23: [UniControl](https://arxiv.org/abs/2305.11147) paper uploaded to arXiv.
 * 05/26/23: UniControl inference code and checkpoint open to public.
 * 05/28/23: Latest UniControl model [checkpoint](https://console.cloud.google.com/storage/browser/_details/sfr-unicontrol-data-research/unicontrol.ckpt) (1.4B #params, 5.78GB) updated.
+* 06/08/23: Latest UniControl model [checkpoint](https://console.cloud.google.com/storage/browser/_details/sfr-unicontrol-data-research/unicontrol.ckpt) updated which supports 12 tasks now (`Canny`, `HED`, `Sketch`, `Depth`, `Normal`, `Skeleton`, `Bbox`, `Seg`, `Outpainting`, `Inpainting`, `Deblurring` and `Colorization`) !
+* 06/08/23: Training dataset ([MultiGen-20M](https://console.cloud.google.com/storage/browser/sfr-unicontrol-data-research/dataset)) is fully released.
+* 06/08/23: Training code is public.
 
+
+## MultiGen-20M Datasets
+Download the training dataset from [here](https://console.cloud.google.com/storage/browser/sfr-unicontrol-data-research/dataset) with the files around 2TB.
 
 ## Instruction
 ### Environment Preparation
@@ -38,24 +44,35 @@ conda activate unicontrol
 ### Checkpoint Preparation
 The checkpoint of pre-trained UniControl model is saved at `./ckpts/unicontrol.ckpt`.
 ```
-mkdir ckpts
 cd ckpts
 wget https://storage.googleapis.com/sfr-unicontrol-data-research/unicontrol.ckpt 
 ```
 
-<!-- 
-If you want to train from scratch, please follow the ControlNet to prepare the checkpoint initialization.
+If you want to train from scratch, please follow the ControlNet to prepare the checkpoint initialization. ControlNet provides a simple script for you to achieve this easily. If your SD filename is `./ckpts/v1-5-pruned.ckpt` and you want the script to save the processed model (SD+ControlNet) at location `./ckpts/control_sd15_ini.ckpt`, you can just run:
+```
+python tool_add_control.py ./ckpts/v1-5-pruned.ckpt ./ckpts/control_sd15_ini.ckpt
+```
 
-ControlNet provides a simple script for you to achieve this easily. If your SD filename is `./models/v1-5-pruned.ckpt` and you want the script to save the processed model (SD+ControlNet) at location `./models/control_sd15_ini.ckpt`, you can just run:
-
-    python tool_add_control.py ./models/v1-5-pruned.ckpt ./models/control_sd15_ini.ckpt
-
-Or if you are using SD2:
-
-    python tool_add_control_sd21.py ./models/v2-1_512-ema-pruned.ckpt ./models/control_sd21_ini.ckpt -->
- 
 ### Data Preparation 
 The example inference data already are saved at `./data` and `./test_imgs_CN`.
+
+Please download the training dataset ([MultiGen-20M](https://console.cloud.google.com/storage/browser/sfr-unicontrol-data-research/dataset)) to `./multigen20m`. Please:
+```
+cd multigen20m
+gsutil cp -r gs://sfr-unicontrol-data-research/dataset ./
+```
+Then unzip the all the files.
+
+### Model Training
+Training from Scratch:
+``` 
+python train_unicontrol.py --ckpt ./ckpts/control_sd15_ini.ckpt --config ./models/cldm_v15_unicontrol_v11.yaml --lr 1e-5
+```
+
+Model Finetuning:
+``` 
+python train_unicontrol.py --ckpt ./ckpts/unicontrol.ckpt  --config ./models/cldm_v15_unicontrol.yaml --lr 1e-7
+```
 
 ### Model Inference (CUDA 11.0 and Conda 4.12.0 work)
 For different tasks, please run the code as follows. If you meet OOM error, please decrease the "--num_samples".
@@ -108,6 +125,24 @@ Image Outpainting:
 python inference_demo.py --ckpt ./ckpts/unicontrol.ckpt --task outpainting
 ```
 
+
+Image Inpainting:
+```
+python inference_demo.py --ckpt ./ckpts/unicontrol.ckpt --task inpainting
+```
+
+
+Image Deblurring:
+```
+python inference_demo.py --ckpt ./ckpts/unicontrol.ckpt --task blur
+```
+
+
+Image Colorization:
+```
+python inference_demo.py --ckpt ./ckpts/unicontrol.ckpt --task grayscale
+```
+
 ### Gradio Demo ([App Demo Video](https://github.com/salesforce/UniControl/issues/1), CUDA 11.0 and Conda 4.12.0 work)
 We have provided gradio demos for different tasks to use. The example images are saved at `./test_imgs`. 
 <div align="center">
@@ -116,7 +151,7 @@ We have provided gradio demos for different tasks to use. The example images are
 
 For all the tasks (`Canny, HED, Sketch, Depth, Normal, Human Pose, Seg, Bbox, Outpainting`) please run the following code: 
 ```
-python gradio_all_tasks.py
+python app/gradio_all_tasks.py
 ```
 
 <div align="center">
@@ -135,7 +170,7 @@ Or, we provide the task-specifc gradio demos:
 
 Canny to Image Generation:
 ```
-python gradio_canny2image.py
+python app/gradio_canny2image.py
 ```
 
 ***
@@ -146,7 +181,7 @@ python gradio_canny2image.py
 
 HED Edge to Image Generation:
 ```
-python gradio_hed2image.py
+python app/gradio_hed2image.py
 ```
 
 ***
@@ -157,7 +192,7 @@ python gradio_hed2image.py
 
 HED-like Skech to Image Generation:
 ```
-python gradio_hedsketch2image.py
+python app/gradio_hedsketch2image.py
 ```
 
 ***
@@ -168,7 +203,7 @@ python gradio_hedsketch2image.py
 
 Depth Map to Image Generation:
 ```
-python gradio_depth2image.py
+python app/gradio_depth2image.py
 ```
 
 ***
@@ -179,7 +214,7 @@ python gradio_depth2image.py
 
 Normal Surface Map to Image Generation:
 ```
-python gradio_normal2image.py
+python app/gradio_normal2image.py
 ```
 
 ***
@@ -190,7 +225,7 @@ python gradio_normal2image.py
 
 Segmentation Map to Image Generation:
 ```
-python gradio_seg2image.py
+python app/gradio_seg2image.py
 ```
 
 ***
@@ -201,7 +236,7 @@ python gradio_seg2image.py
 
 Human Skeleton to Image Generation:
 ```
-python gradio_pose2image.py
+python app/gradio_pose2image.py
 ```
 
 ***
@@ -212,7 +247,7 @@ python gradio_pose2image.py
 
 Object Bounding Boxes to Image Generation:
 ```
-python gradio_bbox2image.py
+python app/gradio_bbox2image.py
 ```
 
 ***
@@ -223,7 +258,43 @@ python gradio_bbox2image.py
 
 Image Outpainting:
 ```
-python gradio_outpainting.py
+python app/gradio_outpainting.py
+```
+
+
+***
+
+<div align="center">
+    <a><img src="figs/gradio_inpainting.png"  height="450px" ></a>
+</div>
+
+Image Inpainting:
+```
+python app/gradio_inpainting.py
+```
+
+
+***
+
+<div align="center">
+    <a><img src="figs/gradio_colorization.png"  height="450px" ></a>
+</div>
+
+Image Colorization:
+```
+python app/gradio_colorization.py
+```
+
+
+***
+
+<div align="center">
+    <a><img src="figs/gradio_deblur.png"  height="450px" ></a>
+</div>
+
+Image Deblurring:
+```
+python app/gradio_deblur.py
 ```
 
 
@@ -231,8 +302,8 @@ python gradio_outpainting.py
 - [x] Data Preparation
 - [x] Pre-training Tasks Inference
 - [x] Gradio Demo
-- [ ] Zero-shot Tasks Inference
-- [ ] Model Training
+- [x] Model Training
+- [ ] HF Space
 
 ## Tips
 * Negative prompts are very useful sometimes: `monochrome, lowres, bad anatomy, worst quality, low quality` are example negative prompts.

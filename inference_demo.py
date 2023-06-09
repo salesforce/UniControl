@@ -26,8 +26,8 @@ from torchvision.utils import make_grid
 from utils import check_safety
 
 parser = argparse.ArgumentParser(description="args")
-parser.add_argument("--task", type=str, default='canny', choices=['canny', 'hed', 'seg', 'normal', 'depth','openpose', 'imageedit', 'bbox', 'hedsketch', 'outpainting', 'grayscale'], help='option of task')
-parser.add_argument("--ckpt", type=str, default='../checkpoints_v1/ours_latest_acti.ckpt', help='$path to checkpoint')
+parser.add_argument("--task", type=str, default='canny', choices=['canny', 'hed', 'seg', 'normal', 'depth','openpose', 'imageedit', 'bbox', 'hedsketch', 'outpainting', 'grayscale', 'blur', 'inpainting', 'grayscale'], help='option of task')
+parser.add_argument("--ckpt", type=str, default='./ckpts/unicontrol.ckpt', help='$path to checkpoint')
 parser.add_argument("--strength", type=float, default=1.0, help='control guidiance strength')
 parser.add_argument("--scale", type=float, default=9.0, help='text guidiance scale')
 parser.add_argument("--output_path", type=str, default='./output', help='$path to save prediction results')
@@ -117,8 +117,6 @@ with torch.no_grad():
         cond = {"c_concat": [control], "c_crossattn": [model.get_learned_conditioning([prompt + ', ' + a_prompt] * num_samples)], "task": task_dic}
         un_cond = {"c_concat": [torch.zeros_like(control)] if guess_mode else [control], "c_crossattn": [model.get_learned_conditioning([""] * num_samples)]}
         shape = (4, H // 8, W // 8)
-
-#         model.control_scales = [args.strength * (0.825 ** float(12 - i)) for i in range(13)] if guess_mode else ([args.strength] * 13)  # Magic number. IDK why. Perhaps because 0.825**12<0.01 but 0.826**12>0.01
         
         samples, intermediates = ddim_sampler.sample(ddim_steps, num_samples,
                                                      shape, cond, verbose=False, eta=0,

@@ -7,7 +7,9 @@
  * Modified from ControlNet repo: https://github.com/lllyasviel/ControlNet
  * Copyright (c) 2023 Lvmin Zhang and Maneesh Agrawala
 '''
+import sys
 
+sys.path.append('./')
 from share import *
 import config
 
@@ -26,11 +28,15 @@ from annotator.canny import CannyDetector
 from annotator.midas import MidasDetector
 from annotator.outpainting import Outpainter
 from annotator.openpose import OpenposeDetector
+from annotator.inpainting import Inpainter
+from annotator.grayscale import GrayscaleConverter
+from annotator.blur import Blurrer
 import cvlib as cv
 
 from cldm.model import create_model, load_state_dict
 from cldm.ddim_unicontrol_hacked import DDIMSampler
 import pdb
+
 
 apply_uniformer = UniformerDetector()
 apply_midas = MidasDetector()
@@ -38,6 +44,9 @@ apply_canny = CannyDetector()
 apply_hed = HEDdetector()
 model_outpainting = Outpainter()
 apply_openpose = OpenposeDetector()
+model_grayscale = GrayscaleConverter()
+model_blur = Blurrer()
+model_inpainting = Inpainter()
 
 def midas(img, res):
     img = resize_image(HWC3(img), res)
@@ -49,15 +58,29 @@ def outpainting(img, res, rand_h, rand_w):
     result = model_outpainting(img, rand_h, rand_w)
     return result
 
+def grayscale(img, res):
+    img = resize_image(HWC3(img), res)
+    result = model_grayscale(img)
+    return result
+
+def blur(img, res, ksize):
+    img = resize_image(HWC3(img), res)   
+    result = model_blur(img, ksize)
+    return result
+
+def inpainting(img, res,  rand_h, rand_h_1, rand_w, rand_w_1):
+    img = resize_image(HWC3(img), res)   
+    result = model_inpainting(img,  rand_h, rand_h_1, rand_w, rand_w_1)
+    return result
+
 model = create_model('./models/cldm_v15_unicontrol.yaml').cpu()
 model.load_state_dict(load_state_dict('./ckpts/unicontrol.ckpt', location='cuda'), strict=False)
 model = model.cuda()
 ddim_sampler = DDIMSampler(model)
 
-task_to_name = {'hed': 'control_hed', 'canny': 'control_canny', 'seg': 'control_seg', 'segbase': 'control_seg', 'depth': 'control_depth', 'normal': 'control_normal', 'openpose': 'control_openpose', 'bbox': 'control_bbox', 'grayscale': 'control_grayscale', 'outpainting': 'control_outpainting', 'hedsketch': 'control_hedsketch'}
-
-name_to_instruction = {"control_hed": "hed edge to image", "control_canny": "canny edge to image", "control_seg": "segmentation map to image", "control_depth": "depth map to image", "control_normal": "normal surface map to image", "control_img": "image editing", "control_openpose": "human pose skeleton to image", "control_hedsketch": "sketch to image", "control_bbox": "bounding box to image", "control_outpainting": "image outpainting"}
-
+task_to_name = {'hed': 'control_hed', 'canny': 'control_canny', 'seg': 'control_seg', 'segbase': 'control_seg', 'depth': 'control_depth', 'normal': 'control_normal', 'openpose': 'control_openpose', 'bbox': 'control_bbox', 'grayscale': 'control_grayscale', 'outpainting': 'control_outpainting', 'hedsketch': 'control_hedsketch', 'inpainting':'control_inpainting', 'blur':'control_blur', 'grayscale':'control_grayscale'}
+            
+name_to_instruction = {"control_hed": "hed edge to image", "control_canny": "canny edge to image", "control_seg": "segmentation map to image", "control_depth": "depth map to image", "control_normal": "normal surface map to image", "control_img": "image editing", "control_openpose": "human pose skeleton to image", "control_hedsketch": "sketch to image", "control_bbox": "bounding box to image", "control_outpainting": "image outpainting", "control_grayscale": "gray image to color image", "control_blur": "deblur image to clean image", "control_inpainting": "image inpainting"}
 
 def process_canny(input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, ddim_steps, guess_mode, strength, scale, seed, eta, low_threshold, high_threshold, condition_mode):
     with torch.no_grad():
@@ -527,7 +550,11 @@ def process_outpainting(input_image, prompt, a_prompt, n_prompt, num_samples, im
         input_image = HWC3(input_image)
         img = resize_image(input_image, image_resolution)
         H, W, C = img.shape
-        detected_map = outpainting(input_image, image_resolution, h_ratio, w_ratio)        
+        if condition_mode == True:
+            detected_map = outpainting(input_image, image_resolution, h_ratio, w_ratio)
+        else:
+            detected_map = img
+             
         detected_map = cv2.resize(detected_map, (W, H), interpolation=cv2.INTER_LINEAR)
 
         control = torch.from_numpy(detected_map.copy()).float().cuda() / 255.0
@@ -638,6 +665,162 @@ def process_sketch(input_image, prompt, a_prompt, n_prompt, num_samples, image_r
 
         results = [x_samples[i] for i in range(num_samples)]
     return [detected_map] + results
+
+
+def process_colorization(input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, ddim_steps, guess_mode, strength, scale, seed, eta, condition_mode):
+    with torch.no_grad():
+        input_image = HWC3(input_image)
+        img = resize_image(input_image, image_resolution)
+        H, W, C = img.shape
+        if condition_mode == True:
+            detected_map = grayscale(input_image, image_resolution)
+            detected_map = cv2.resize(detected_map, (W, H), interpolation=cv2.INTER_LINEAR)
+            detected_map = detected_map[:,:,np.newaxis]
+            detected_map = detected_map.repeat(3, axis=2)
+        else:
+            detected_map = img
+
+        control = torch.from_numpy(detected_map.copy()).float().cuda() / 255.0
+        control = torch.stack([control for _ in range(num_samples)], dim=0)
+        control = einops.rearrange(control, 'b h w c -> b c h w').clone()
+
+        if seed == -1:
+            seed = random.randint(0, 65535)
+        seed_everything(seed)
+
+        if config.save_memory:
+            model.low_vram_shift(is_diffusing=False)
+            
+        task = 'grayscale'    
+        task_dic = {}
+        task_dic['name'] = task_to_name[task]
+        task_instruction = name_to_instruction[task_dic['name']]
+        task_dic['feature'] = model.get_learned_conditioning(task_instruction)[:,:1,:]
+        
+        cond = {"c_concat": [control], "c_crossattn": [model.get_learned_conditioning([prompt + ', ' + a_prompt] * num_samples)], "task": task_dic}
+        
+        un_cond = {"c_concat": None if guess_mode else [control], "c_crossattn": [model.get_learned_conditioning([n_prompt] * num_samples)]}
+        shape = (4, H // 8, W // 8)
+
+        if config.save_memory:
+            model.low_vram_shift(is_diffusing=True)
+
+        samples, intermediates = ddim_sampler.sample(ddim_steps, num_samples,
+                                                     shape, cond, verbose=False, eta=eta,
+                                                     unconditional_guidance_scale=scale,
+                                                     unconditional_conditioning=un_cond)
+
+        if config.save_memory:
+            model.low_vram_shift(is_diffusing=False)
+
+        x_samples = model.decode_first_stage(samples)
+        x_samples = (einops.rearrange(x_samples, 'b c h w -> b h w c') * 127.5 + 127.5).cpu().numpy().clip(0, 255).astype(np.uint8)
+
+        results = [x_samples[i] for i in range(num_samples)]
+    return [detected_map] + results
+
+def process_deblur(input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, ddim_steps, guess_mode, strength, scale, seed, eta, ksize, condition_mode):
+    with torch.no_grad():
+        input_image = HWC3(input_image)
+        img = resize_image(input_image, image_resolution)
+        H, W, C = img.shape
+        if condition_mode == True:
+            detected_map = blur(input_image, image_resolution, ksize)
+        else:
+            detected_map = img
+            
+        detected_map = cv2.resize(detected_map, (W, H), interpolation=cv2.INTER_LINEAR)
+
+        control = torch.from_numpy(detected_map.copy()).float().cuda() / 255.0
+        control = torch.stack([control for _ in range(num_samples)], dim=0)
+        control = einops.rearrange(control, 'b h w c -> b c h w').clone()
+
+        if seed == -1:
+            seed = random.randint(0, 65535)
+        seed_everything(seed)
+
+        if config.save_memory:
+            model.low_vram_shift(is_diffusing=False)
+            
+        task = 'blur'    
+        task_dic = {}
+        task_dic['name'] = task_to_name[task]
+        task_instruction = name_to_instruction[task_dic['name']]
+        task_dic['feature'] = model.get_learned_conditioning(task_instruction)[:,:1,:]
+        
+        cond = {"c_concat": [control], "c_crossattn": [model.get_learned_conditioning([prompt + ', ' + a_prompt] * num_samples)], "task": task_dic}
+        un_cond = {"c_concat": None if guess_mode else [control], "c_crossattn": [model.get_learned_conditioning([n_prompt] * num_samples)]}
+        shape = (4, H // 8, W // 8)
+
+        if config.save_memory:
+            model.low_vram_shift(is_diffusing=True)
+
+        samples, intermediates = ddim_sampler.sample(ddim_steps, num_samples,
+                                                     shape, cond, verbose=False, eta=eta,
+                                                     unconditional_guidance_scale=scale,
+                                                     unconditional_conditioning=un_cond)
+
+        if config.save_memory:
+            model.low_vram_shift(is_diffusing=False)
+
+        x_samples = model.decode_first_stage(samples)
+        x_samples = (einops.rearrange(x_samples, 'b c h w -> b h w c') * 127.5 + 127.5).cpu().numpy().clip(0, 255).astype(np.uint8)
+
+        results = [x_samples[i] for i in range(num_samples)]
+    return [detected_map] + results
+
+def process_inpainting(input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, ddim_steps, guess_mode, strength, scale, seed, eta, h_ratio_t, h_ratio_d, w_ratio_l, w_ratio_r, condition_mode):
+    with torch.no_grad():
+        input_image = HWC3(input_image)
+        img = resize_image(input_image, image_resolution)
+        H, W, C = img.shape
+        if condition_mode == True:
+            detected_map = inpainting(input_image, image_resolution, h_ratio_t, h_ratio_d, w_ratio_l, w_ratio_r)
+        else:
+            detected_map = img
+        detected_map = cv2.resize(detected_map, (W, H), interpolation=cv2.INTER_LINEAR)
+
+        control = torch.from_numpy(detected_map.copy()).float().cuda() / 255.0
+        control = torch.stack([control for _ in range(num_samples)], dim=0)
+        control = einops.rearrange(control, 'b h w c -> b c h w').clone()
+
+        if seed == -1:
+            seed = random.randint(0, 65535)
+        seed_everything(seed)
+
+        if config.save_memory:
+            model.low_vram_shift(is_diffusing=False)
+            
+        task = 'inpainting'    
+        task_dic = {}
+        task_dic['name'] = task_to_name[task]
+        task_instruction = name_to_instruction[task_dic['name']]
+        task_dic['feature'] = model.get_learned_conditioning(task_instruction)[:,:1,:]
+        
+        cond = {"c_concat": [control], "c_crossattn": [model.get_learned_conditioning([prompt + ', ' + a_prompt] * num_samples)], "task": task_dic}
+        un_cond = {"c_concat": None if guess_mode else [control], "c_crossattn": [model.get_learned_conditioning([n_prompt] * num_samples)]}
+        shape = (4, H // 8, W // 8)
+
+        if config.save_memory:
+            model.low_vram_shift(is_diffusing=True)
+
+        samples, intermediates = ddim_sampler.sample(ddim_steps, num_samples,
+                                                     shape, cond, verbose=False, eta=eta,
+                                                     unconditional_guidance_scale=scale,
+                                                     unconditional_conditioning=un_cond)
+
+        if config.save_memory:
+            model.low_vram_shift(is_diffusing=False)
+
+        x_samples = model.decode_first_stage(samples)
+        x_samples = (einops.rearrange(x_samples, 'b c h w -> b h w c') * 127.5 + 127.5).cpu().numpy().clip(0, 255).astype(np.uint8)
+
+        results = [x_samples[i] for i in range(num_samples)]
+    return [detected_map] + results
+
+
+############################################################################################################
+
 
 demo = gr.Blocks()
 with demo:
@@ -879,6 +1062,86 @@ with demo:
                     result_gallery = gr.Gallery(label='Output', show_label=False, elem_id="gallery").style(grid=2, height='auto')
             ips = [input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, ddim_steps, guess_mode, strength, scale, seed, eta, h_ratio, w_ratio, condition_mode]
             run_button.click(fn=process_outpainting, inputs=ips, outputs=[result_gallery])
+            
+        with gr.TabItem("Inpainting"):
+            with gr.Row():
+                gr.Markdown("## UniControl Stable Diffusion with Image Inpainting")
+            with gr.Row():
+                with gr.Column():
+                    input_image = gr.Image(source='upload', type="numpy")
+                    prompt = gr.Textbox(label="Prompt")
+                    run_button = gr.Button(label="Run")
+                    with gr.Accordion("Advanced options", open=False):
+                        num_samples = gr.Slider(label="Images", minimum=1, maximum=12, value=1, step=1)
+                        image_resolution = gr.Slider(label="Image Resolution", minimum=256, maximum=768, value=512, step=64)
+                        strength = gr.Slider(label="Control Strength", minimum=0.0, maximum=2.0, value=1.0, step=0.01)
+                        condition_mode = gr.Checkbox(label='Condition Extraction', value=True)
+                        guess_mode = gr.Checkbox(label='Guess Mode', value=False)
+                        h_ratio_t = gr.Slider(label="Height Masking Ratio (Top)", minimum=20, maximum=80, value=50, step=1)
+                        h_ratio_d = gr.Slider(label="Height Masking Ratio (Down)", minimum=20, maximum=80, value=50, step=1)
+                        w_ratio_l = gr.Slider(label="Width Masking Ratio (Left)", minimum=20, maximum=80, value=50, step=1)
+                        w_ratio_r = gr.Slider(label="Width Masking Ratio (Right)", minimum=20, maximum=80, value=50, step=1)
+                        ddim_steps = gr.Slider(label="Steps", minimum=1, maximum=100, value=30, step=1)
+                        scale = gr.Slider(label="Guidance Scale", minimum=0.1, maximum=30.0, value=9.0, step=0.1)
+                        seed = gr.Slider(label="Seed", minimum=-1, maximum=2147483647, step=1, randomize=True)
+                        eta = gr.Number(label="eta (DDIM)", value=0.0)
+                        a_prompt = gr.Textbox(label="Added Prompt", value='best quality, extremely detailed')
+                        n_prompt = gr.Textbox(label="Negative Prompt", value='')
+                with gr.Column():
+                    result_gallery = gr.Gallery(label='Output', show_label=False, elem_id="gallery").style(grid=2, height='auto')
+            ips = [input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, ddim_steps, guess_mode, strength, scale, seed, eta, h_ratio_t, h_ratio_d, w_ratio_l, w_ratio_r, condition_mode]
+            run_button.click(fn=process_inpainting, inputs=ips, outputs=[result_gallery])
+            
+        with gr.TabItem("Colorization"):
+            with gr.Row():
+                gr.Markdown("## UniControl Stable Diffusion with Gray Image Colorization")
+            with gr.Row():
+                with gr.Column():
+                    input_image = gr.Image(source='upload', type="numpy")
+                    prompt = gr.Textbox(label="Prompt")
+                    run_button = gr.Button(label="Run")
+                    with gr.Accordion("Advanced options", open=False):
+                        num_samples = gr.Slider(label="Images", minimum=1, maximum=12, value=1, step=1)
+                        image_resolution = gr.Slider(label="Image Resolution", minimum=256, maximum=768, value=512, step=64)
+                        strength = gr.Slider(label="Control Strength", minimum=0.0, maximum=2.0, value=1.0, step=0.01)
+                        condition_mode = gr.Checkbox(label='Condition Extraction', value=True)
+                        guess_mode = gr.Checkbox(label='Guess Mode', value=False)
+                        ddim_steps = gr.Slider(label="Steps", minimum=1, maximum=100, value=30, step=1)
+                        scale = gr.Slider(label="Guidance Scale", minimum=0.1, maximum=30.0, value=9.0, step=0.1)
+                        seed = gr.Slider(label="Seed", minimum=-1, maximum=2147483647, step=1, randomize=True)
+                        eta = gr.Number(label="eta (DDIM)", value=0.0)
+                        a_prompt = gr.Textbox(label="Added Prompt", value='best quality, extremely detailed')
+                        n_prompt = gr.Textbox(label="Negative Prompt", value='')
+                with gr.Column():
+                    result_gallery = gr.Gallery(label='Output', show_label=False, elem_id="gallery").style(grid=2, height='auto')
+            ips = [input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, ddim_steps, guess_mode, strength, scale, seed, eta, condition_mode]
+            run_button.click(fn=process_colorization, inputs=ips, outputs=[result_gallery])
+            
+        with gr.TabItem("Deblur"):
+            with gr.Row():
+                gr.Markdown("## UniControl Stable Diffusion with Image Deblurring")
+            with gr.Row():
+                with gr.Column():
+                    input_image = gr.Image(source='upload', type="numpy")
+                    prompt = gr.Textbox(label="Prompt")
+                    run_button = gr.Button(label="Run")
+                    with gr.Accordion("Advanced options", open=False):
+                        num_samples = gr.Slider(label="Images", minimum=1, maximum=12, value=1, step=1)
+                        image_resolution = gr.Slider(label="Image Resolution", minimum=256, maximum=768, value=512, step=64)
+                        strength = gr.Slider(label="Control Strength", minimum=0.0, maximum=2.0, value=1.0, step=0.01)
+                        condition_mode = gr.Checkbox(label='Condition Extraction', value=True)
+                        guess_mode = gr.Checkbox(label='Guess Mode', value=False)
+                        ksize = gr.Slider(label="Kernel Size", minimum=11, maximum=101, value=51, step=2)
+                        ddim_steps = gr.Slider(label="Steps", minimum=1, maximum=100, value=30, step=1)
+                        scale = gr.Slider(label="Guidance Scale", minimum=0.1, maximum=30.0, value=9.0, step=0.1)
+                        seed = gr.Slider(label="Seed", minimum=-1, maximum=2147483647, step=1, randomize=True)
+                        eta = gr.Number(label="eta (DDIM)", value=0.0)
+                        a_prompt = gr.Textbox(label="Added Prompt", value='best quality, extremely detailed')
+                        n_prompt = gr.Textbox(label="Negative Prompt", value='')
+                with gr.Column():
+                    result_gallery = gr.Gallery(label='Output', show_label=False, elem_id="gallery").style(grid=2, height='auto')
+            ips = [input_image, prompt, a_prompt, n_prompt, num_samples, image_resolution, ddim_steps, guess_mode, strength, scale, seed, eta, ksize, condition_mode]
+            run_button.click(fn=process_deblur, inputs=ips, outputs=[result_gallery])
 
 demo.queue(concurrency_count=3)
 demo.launch(share=True, server_name='0.0.0.0')

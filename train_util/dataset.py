@@ -6,12 +6,15 @@
  * By Can Qin
 '''
 
+import sys
 
+sys.path.append('./')
 import json
 import cv2
 import numpy as np
 
 from torch.utils.data import Dataset
+import pdb
 from annotator.util import resize_image, HWC3
 import random
 
@@ -48,14 +51,10 @@ class MyDataset(Dataset):
             self.key_prompt = 'control_grayscale'
         else:
             print('TASK NOT MATCH')
-        self.key_prompt_model = self.key_prompt   
+            
         self.resolution = 512
+        self.none_loop = 0
         
-        self.task_to_instruction = {"control_hed": "hed edge to image", "control_canny": "canny edge to image", "control_seg": "segmentation map to image", "control_depth": "depth map to image", "control_normal": "normal surface map to image", "control_img": "image editing", "control_openpose": "human pose skeleton to image", "control_hedsketch": "sketch to image", "control_bbox": "bounding box to image", "control_outpainting": "image outpainting", "control_grayscale": "gray image to color image", "control_blur": "deblur image to clean image", "control_inpainting": "image inpainting"}
-        
-    def __len__(self):
-        return len(self.data)
-    
     def resize_image_control(self, control_image, resolution):
         H, W, C = control_image.shape
         if W >= H:
@@ -76,23 +75,62 @@ class MyDataset(Dataset):
         k = float(resolution) / min(H, W)
         img = cv2.resize(control_image, (resolution, resolution), interpolation=cv2.INTER_LANCZOS4 if k > 1 else cv2.INTER_AREA)
         return img, [crop_t/H, crop_b/H, crop_l/W, crop_r/W]
+    
+    def resize_image_target(self, target_image, resolution, sizes):
+        H, W, C = target_image.shape
+        crop_t_rate, crop_b_rate, crop_l_rate, crop_r_rate = sizes[0], sizes[1], sizes[2], sizes[3]
+        crop_t, crop_b, crop_l, crop_r = int(crop_t_rate*H), int(crop_b_rate*H), int(crop_l_rate*W), int(crop_r_rate*W)
+        target_image = target_image[ crop_t: crop_b, crop_l:crop_r]
+        H = float(H)
+        W = float(W)
+        k = float(resolution) / min(H, W)
+        img = cv2.resize(target_image, (resolution, resolution), interpolation=cv2.INTER_LANCZOS4 if k > 1 else cv2.INTER_AREA)
+        return img
+        
+    def __len__(self):
+        return len(self.data)
 
     def __getitem__(self, idx):
         item = self.data[idx]
         source_filename = item[self.key_prompt]
-        print(self.path_meta + source_filename)
-        source_img = cv2.imread(self.path_meta + source_filename)
+        source_img = cv2.imread(self.path_meta + "/conditions/" + source_filename)
         target_filename = item['source']
         if "./" == target_filename[0:2]:
             target_filename = target_filename[2:]
-            
+        target_img = cv2.imread(self.path_meta+ "/images/" + target_filename)
         prompt = item['prompt']
-
+        
+        while source_img is None or target_img is None or prompt is None:
+            # corner cases
+            if idx >= 0 and idx < len(self.data) - 1:
+                idx += 1
+            elif idx == len(self.data) - 1:
+                idx = 0
+            item = self.data[idx]
+            source_filename = item[self.key_prompt]
+            source_img = cv2.imread(self.path_meta + "/conditions/" + source_filename)
+            target_filename = item['source']
+            if "./" == target_filename[0:2]:
+                target_filename = target_filename[2:]
+            target_img = cv2.imread(self.path_meta+ "/images/" + target_filename)
+            prompt = item['prompt']
+            self.none_loop += 1
+            if self.none_loop > 10000:
+                break
+                
+        source_img,  sizes = self.resize_image_control(source_img, self.resolution)
+        target_img = self.resize_image_target(target_img, self.resolution, sizes)
+        
+        # Do not forget that OpenCV read images in BGR order.
         source_img = cv2.cvtColor(source_img, cv2.COLOR_BGR2RGB)
-        source_img,  _ = self.resize_image_control(source_img, self.resolution)
+        target_img = cv2.cvtColor(target_img, cv2.COLOR_BGR2RGB)
 
         # Normalize source images to [0, 1].
         source_img = source_img.astype(np.float32) / 255.0
 
-        return dict(txt=prompt, hint=source_img, task=self.key_prompt_model, instruction=self.task_to_instruction[self.key_prompt_model])
+        # Normalize target images to [-1, 1].
+        target_img = (target_img.astype(np.float32) / 127.5) - 1.0
+        
+        prompt = prompt if random.uniform(0, 1) > 0.3 else '' # dropout rate 30%
+        return dict(jpg=target_img, txt=prompt, hint=source_img, task=self.key_prompt)
 
