@@ -26,12 +26,12 @@ We introduce UniControl, a new generative foundation model that consolidates a w
 
 
 ## Updates
-* **05/18/23**: *** [UniControl](https://arxiv.org/abs/2305.11147) paper uploaded to arXiv. *** 
-* **05/26/23**: *** UniControl inference code and checkpoint open to public. *** 
-* **05/28/23**: *** Latest UniControl model [checkpoint](https://console.cloud.google.com/storage/browser/_details/sfr-unicontrol-data-research/unicontrol.ckpt) (1.4B #params, 5.78GB) updated. *** 
-* **06/08/23**: *** Latest UniControl model [checkpoint](https://console.cloud.google.com/storage/browser/_details/sfr-unicontrol-data-research/unicontrol.ckpt) updated which supports 12 tasks now (**Canny**, **HED**, **Sketch**, **Depth**, **Normal**, **Skeleton**, **Bbox**, **Seg**, **Outpainting**, **Inpainting**, **Deblurring** and **Colorization**) ! *** 
-* **06/08/23**: *** Training dataset ([MultiGen-20M](https://console.cloud.google.com/storage/browser/sfr-unicontrol-data-research/dataset)) is fully released. *** 
-* **06/08/23**: *** Training code is public. *** 
+* **05/18/23**: ***[UniControl](https://arxiv.org/abs/2305.11147) paper uploaded to arXiv.*** 
+* **05/26/23**: ***UniControl inference code and checkpoint open to public.*** 
+* **05/28/23**: ***Latest UniControl model [checkpoint](https://console.cloud.google.com/storage/browser/_details/sfr-unicontrol-data-research/unicontrol.ckpt) (1.4B #params, 5.78GB) updated.*** 
+* **06/08/23**: ***Latest UniControl model [checkpoint](https://console.cloud.google.com/storage/browser/_details/sfr-unicontrol-data-research/unicontrol.ckpt) updated which supports 12 tasks now (**Canny**, **HED**, **Sketch**, **Depth**, **Normal**, **Skeleton**, **Bbox**, **Seg**, **Outpainting**, **Inpainting**, **Deblurring** and **Colorization**) !*** 
+* **06/08/23**: ***Training dataset ([MultiGen-20M](https://console.cloud.google.com/storage/browser/sfr-unicontrol-data-research/dataset)) is fully released.*** 
+* **06/08/23**: ***Training code is public.*** 
 
 
 ## MultiGen-20M Datasets
