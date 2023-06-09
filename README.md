@@ -149,7 +149,7 @@ We have provided gradio demos for different tasks to use. The example images are
     <a><img src="figs/gradio_all_tasks.png"  height="450px" ></a>
 </div>
 
-For all the tasks (`Canny, HED, Sketch, Depth, Normal, Human Pose, Seg, Bbox, Outpainting`) please run the following code: 
+For all the tasks (`Canny, HED, Sketch, Depth, Normal, Human Pose, Seg, Bbox, Outpainting, Colorization, Deblurring, Inpainting`) please run the following code: 
 ```
 python app/gradio_all_tasks.py
 ```
@@ -262,16 +262,6 @@ python app/gradio_outpainting.py
 ```
 
 
-***
-
-<div align="center">
-    <a><img src="figs/gradio_inpainting.png"  height="450px" ></a>
-</div>
-
-Image Inpainting:
-```
-python app/gradio_inpainting.py
-```
 
 
 ***
@@ -295,6 +285,18 @@ python app/gradio_colorization.py
 Image Deblurring:
 ```
 python app/gradio_deblur.py
+```
+
+
+***
+
+<div align="center">
+    <a><img src="figs/gradio_inpainting.png"  height="450px" ></a>
+</div>
+
+Image Inpainting:
+```
+python app/gradio_inpainting.py
 ```
 
 
