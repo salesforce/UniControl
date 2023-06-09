@@ -262,8 +262,6 @@ python app/gradio_outpainting.py
 ```
 
 
-
-
 ***
 
 <div align="center">
@@ -310,6 +308,7 @@ python app/gradio_inpainting.py
 ## Tips
 * Negative prompts are very useful sometimes: `monochrome, lowres, bad anatomy, worst quality, low quality` are example negative prompts.
 
+* UniControl can work well on some tasks (ie, Colorization and Deblurring) without ANY text prompts.
 
 ## Citation
 If you find this project useful for your research, please kindly cite our paper:
