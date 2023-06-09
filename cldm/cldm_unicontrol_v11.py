@@ -211,7 +211,7 @@ class ControlNet(nn.Module):
             nn.SiLU()
         ) for _ in range( self.all_tasks_num)])
         
-        self.input_hint_block_zeroconv_0 = nn.ModuleList([(conv_nd(dims, 32, 32, 3, padding=1)),(conv_nd(dims, 32, 32, 3, padding=1))])
+        self.input_hint_block_zeroconv_0 = nn.ModuleList([(conv_nd(dims, 32, 32, 3, padding=1)),(conv_nd(dims, 32, 32, 3, padding=1))]) # non-zero conv is helful in the early stage training
         
         self.task_id_layernet_zeroconv_0 = linear(time_embed_dim, 32)
         self.input_hint_block_share = TimestepEmbedSequential(
@@ -225,7 +225,7 @@ class ControlNet(nn.Module):
             nn.SiLU(),
         ) 
         
-        self.input_hint_block_zeroconv_1 = nn.ModuleList([(conv_nd(dims, 256, model_channels, 3, padding=1)), (conv_nd(dims, 256, model_channels, 3, padding=1)) ])  
+        self.input_hint_block_zeroconv_1 = nn.ModuleList([(conv_nd(dims, 256, model_channels, 3, padding=1)), (conv_nd(dims, 256, model_channels, 3, padding=1)) ])  # non-zero conv is helful in the early stage training
         
         self.task_id_layernet_zeroconv_1 = linear(time_embed_dim, 256)
         
