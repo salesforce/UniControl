@@ -16,12 +16,20 @@ This repository is for the paper:
 
 
 
+## Introduction
+Achieving machine autonomy and human control often represent divergent objectives in the design of interactive AI systems. Visual generative foundation models such as Stable Diffusion show promise in navigating these goals, especially when prompted with arbitrary languages. However, they often fall short in generating images with spatial, structural, or geometric controls. The integration of such controls, which can accommodate various visual conditions in a single unified model, remains an unaddressed challenge. In response, we introduce UniControl, a new generative foundation model that consolidates a wide array of controllable condition-to-image (C2I) tasks within a singular framework, while still allowing for arbitrary language prompts. UniControl enables pixel-level-precise image generation, where visual conditions primarily influence the generated structures and language prompts guide the style and context. To equip UniControl with the capacity to handle diverse visual conditions, we augment pretrained text-to-image diffusion models and introduce a task-aware HyperNet to modulate the diffusion models, enabling the adaptation to different C2I tasks simultaneously. Trained on nine unique C2I tasks, UniControl demonstrates impressive zero-shot generation abilities with unseen visual conditions. Experimental results show that UniControl often surpasses the performance of single-task-controlled methods of comparable model sizes. This control versatility positions UniControl as a significant advancement in the realm of controllable visual generation. 
+
+
+![img](figs/method.png)
+
+
+
 
 ## Updates
 * 05/18/23: [UniControl](https://arxiv.org/abs/2305.11147) paper uploaded to arXiv.
 * 05/26/23: UniControl inference code and checkpoint open to public.
-* 05/28/23: Latest UniControl [checkpoint](https://console.cloud.google.com/storage/browser/_details/sfr-unicontrol-data-research/unicontrol.ckpt) (1.4B #params, 5.78GB) updated.
-* 06/08/23: Latest UniControl [checkpoint](https://console.cloud.google.com/storage/browser/_details/sfr-unicontrol-data-research/unicontrol.ckpt) updated which supports 12 tasks now (`Canny`, `HED`, `Sketch`, `Depth`, `Normal`, `Skeleton`, `Bbox`, `Seg`, `Outpainting`, `Inpainting`, `Deblurring` and `Colorization`) !
+* 05/28/23: Latest UniControl model [checkpoint](https://console.cloud.google.com/storage/browser/_details/sfr-unicontrol-data-research/unicontrol.ckpt) (1.4B #params, 5.78GB) updated.
+* 06/08/23: Latest UniControl model [checkpoint](https://console.cloud.google.com/storage/browser/_details/sfr-unicontrol-data-research/unicontrol.ckpt) updated which supports 12 tasks now (`Canny`, `HED`, `Sketch`, `Depth`, `Normal`, `Skeleton`, `Bbox`, `Seg`, `Outpainting`, `Inpainting`, `Deblurring` and `Colorization`) !
 * 06/08/23: Training dataset ([MultiGen-20M](https://console.cloud.google.com/storage/browser/sfr-unicontrol-data-research/dataset)) is fully released.
 * 06/08/23: Training code is public.
 
@@ -305,7 +313,7 @@ python app/gradio_inpainting.py
 
 * UniControl can work well on some tasks (ie, Colorization and Deblurring) without ANY text prompts.
 
-* If OOM, let `--num_samples 1` may be helpful.
+* If OOM, let `--num_samples 1` may be helpful
 
 ## Citation
 If you find this project useful for your research, please kindly cite our paper:
