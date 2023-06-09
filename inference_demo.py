@@ -35,7 +35,7 @@ parser.add_argument("--config", type=str, default='./models/cldm_v15_unicontrol.
 parser.add_argument("--guess_mode", default=False, help='Guess Mode') 
 parser.add_argument("--seed", default=-1, help='Random Seed') 
 parser.add_argument("--save_memory", default=False, help='Low Memory') 
-parser.add_argument("--num_samples", type=int, default=3, help='Num of Samples') 
+parser.add_argument("--num_samples", type=int, default=1, help='Num of Samples') 
 parser.add_argument("--n_prompt", type=str, default='worst quality, low quality', help='negative prompts') 
 parser.add_argument("--ddim_steps", default=50, help='DDIM Steps') 
 
@@ -95,29 +95,29 @@ a_prompt = 'best quality, extremely detailed'
 with torch.no_grad():
     for idx, batch in enumerate(dataloader):
         prompt = batch['txt'][0]
-        
+
         if seed == -1:
             seed = random.randint(0, 65535)
         seed_everything(seed)
 
         if args.save_memory:
             model.low_vram_shift(is_diffusing=False)
-        
+
         control = batch['hint'].squeeze(0).cuda() # torch.from_numpy(detected_map.copy()).float().cuda() / 255.0
         H, W, C = control.shape
-        
+
         control = torch.stack([control for _ in range(num_samples)], dim=0)
         control = einops.rearrange(control, 'b h w c -> b c h w').clone()
-        
+
         task_dic = {}
         task_dic['name'] = batch['task'][0]
         task_instruction = batch['instruction'][0]
         task_dic['feature'] = model.get_learned_conditioning(task_instruction)[:,:1,:]
-        
+
         cond = {"c_concat": [control], "c_crossattn": [model.get_learned_conditioning([prompt + ', ' + a_prompt] * num_samples)], "task": task_dic}
         un_cond = {"c_concat": [torch.zeros_like(control)] if guess_mode else [control], "c_crossattn": [model.get_learned_conditioning([""] * num_samples)]}
         shape = (4, H // 8, W // 8)
-        
+
         samples, intermediates = ddim_sampler.sample(ddim_steps, num_samples,
                                                      shape, cond, verbose=False, eta=0,
                                                      unconditional_guidance_scale=args.scale,
@@ -126,7 +126,7 @@ with torch.no_grad():
 
         x_samples = torch.clamp((x_samples + 1.0) / 2.0, min=0.0, max=1.0)
         x_samples = x_samples.cpu().permute(0, 2, 3, 1).numpy()
-        
+
         x_checked_image, has_nsfw_concept = check_safety(x_samples)
         x_checked_image_torch = torch.from_numpy(x_checked_image).permute(0, 3, 1, 2)
         for x_sample in x_checked_image_torch:
