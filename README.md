@@ -80,7 +80,7 @@ For different tasks, please run the code as follows. If you meet OOM error, plea
 
 Canny to Image Generation:
 ```
-CUDA_VISIBLE_DEVICES=1 python inference_demo.py --ckpt ./ckpts/unicontrol.ckpt --task canny --save_memory
+python inference_demo.py --ckpt ./ckpts/unicontrol.ckpt --task canny
 ```
 
 HED Edge to Image Generation:
