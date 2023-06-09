@@ -32,7 +32,7 @@ Achieving machine autonomy and human control often represent divergent objective
 
 
 ## MultiGen-20M Datasets
-Download the training dataset from [here](https://console.cloud.google.com/storage/browser/sfr-unicontrol-data-research/dataset) with the files around 2TB.
+There are over 20M image-prompt-triplets [here](https://console.cloud.google.com/storage/browser/sfr-unicontrol-data-research/dataset) with total size > 2TB. It includes all 12 tasks (`Canny`, `HED`, `Sketch`, `Depth`, `Normal`, `Skeleton`, `Bbox`, `Seg`, `Outpainting`, `Inpainting`, `Deblurring` and `Colorization`) which are fully released.
 
 ## Instruction
 ### Environment Preparation
