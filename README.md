@@ -60,7 +60,7 @@ python tool_add_control.py ./ckpts/v1-5-pruned.ckpt ./ckpts/control_sd15_ini.ckp
 Please download the training dataset ([MultiGen-20M](https://console.cloud.google.com/storage/browser/sfr-unicontrol-data-research/dataset)) to `./multigen20m`. Please:
 ```
 cd multigen20m
-gsutil cp -r gs://sfr-unicontrol-data-research/dataset ./
+gsutil -m cp -r gs://sfr-unicontrol-data-research/dataset ./
 ```
 Then unzip the all the files.
 
