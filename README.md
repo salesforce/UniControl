@@ -31,7 +31,8 @@ We introduce **UniControl**, a new generative foundation model that consolidates
 * **05/28/23**: ***Latest UniControl model [checkpoint](https://console.cloud.google.com/storage/browser/_details/sfr-unicontrol-data-research/unicontrol.ckpt) (1.4B #params, 5.78GB) updated.*** 
 * **06/08/23**: ***Latest UniControl model [checkpoint](https://console.cloud.google.com/storage/browser/_details/sfr-unicontrol-data-research/unicontrol.ckpt) updated which supports 12 tasks now (***Canny***, ***HED***, ***Sketch***, ***Depth***, ***Normal***, ***Skeleton***, ***Bbox***, ***Seg***, ***Outpainting***, ***Inpainting***, ***Deblurring*** and ***Colorization***) !*** 
 * **06/08/23**: ***Training dataset ([MultiGen-20M](https://console.cloud.google.com/storage/browser/sfr-unicontrol-data-research/dataset)) is fully released.*** 
-* **06/08/23**: ***Training code is public.***:blush: 
+* **06/08/23**: ***Training code is public.***:blush:
+* **07/06/23**: ***Latest UniControl model v1.1 [checkpoint](https://console.cloud.google.com/storage/browser/_details/sfr-unicontrol-data-research/unicontrol_v1.1.ckpt) updated which supports 12 tasks now (***Canny***, ***HED***, ***Sketch***, ***Depth***, ***Normal***, ***Skeleton***, ***Bbox***, ***Seg***, ***Outpainting***, ***Inpainting***, ***Deblurring*** and ***Colorization***) !***
 
 
 ## MultiGen-20M Datasets
@@ -49,6 +50,11 @@ The checkpoint of pre-trained UniControl model is saved at `./ckpts/unicontrol.c
 ```
 cd ckpts
 wget https://storage.googleapis.com/sfr-unicontrol-data-research/unicontrol.ckpt 
+```
+
+You can also use the latest trained model
+```
+wget https://storage.googleapis.com/sfr-unicontrol-data-research/unicontrol_v1.1.ckpt 
 ```
 
 If you want to train from scratch, please follow the ControlNet to prepare the checkpoint initialization. ControlNet provides a simple script for you to achieve this easily. If your SD filename is `./ckpts/v1-5-pruned.ckpt` and you want the script to save the processed model (SD+ControlNet) at location `./ckpts/control_sd15_ini.ckpt`, you can just run:
