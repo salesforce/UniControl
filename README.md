@@ -1,4 +1,4 @@
-# [UniControl](https://arxiv.org/abs/2305.11147) [![arXiv](https://img.shields.io/badge/📃-arXiv-ff69b4)](https://arxiv.org/pdf/2305.11147.pdf) [![webpage](https://img.shields.io/badge/🖥-Website-9cf)](https://canqin001.github.io/UniControl-Page/)
+# [UniControl](https://arxiv.org/abs/2305.11147) [![arXiv](https://img.shields.io/badge/📃-arXiv-ff69b4)](https://arxiv.org/pdf/2305.11147.pdf) [![webpage](https://img.shields.io/badge/🖥-Website-9cf)](https://canqin001.github.io/UniControl-Page/) [![HuggingFace space](https://img.shields.io/badge/🤗-Huggingface%20Space-cyan.svg)](https://huggingface.co/spaces/Robert001/UniControl-Demo)
 <div align="center">
     <a><img src="figs/salesforce.png"  height="100px" ></a>
     <a><img src="figs/northeastern.png"  height="100px" ></a>
