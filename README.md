@@ -34,6 +34,7 @@ We introduce **UniControl**, a new generative foundation model that consolidates
 * **06/08/23**: ***Training code is public.***:blush:
 * **07/06/23**: ***Latest UniControl model v1.1 [checkpoint](https://console.cloud.google.com/storage/browser/_details/sfr-unicontrol-data-research/unicontrol_v1.1.ckpt) updated which supports 12 tasks now (***Canny***, ***HED***, ***Sketch***, ***Depth***, ***Normal***, ***Skeleton***, ***Bbox***, ***Seg***, ***Outpainting***, ***Inpainting***, ***Deblurring*** and ***Colorization***) !***
 * **07/25/23**: ***Huggingface Demo API is available! [![HuggingFace space](https://img.shields.io/badge/🤗-Huggingface%20Space-cyan.svg)](https://huggingface.co/spaces/Robert001/UniControl-Demo)***
+* **07/25/23**: ***Safetensors model is available!***
 
 
 ## MultiGen-20M Datasets
@@ -53,9 +54,10 @@ cd ckpts
 wget https://storage.googleapis.com/sfr-unicontrol-data-research/unicontrol.ckpt 
 ```
 
-You can also use the latest trained model
+You can also use the latest trained model (ckpt and safetensors)
 ```
-wget https://storage.googleapis.com/sfr-unicontrol-data-research/unicontrol_v1.1.ckpt 
+wget https://storage.googleapis.com/sfr-unicontrol-data-research/unicontrol_v1.1.ckpt
+wget https://storage.googleapis.com/sfr-unicontrol-data-research/unicontrol_v1.1.st
 ```
 
 If you want to train from scratch, please follow the ControlNet to prepare the checkpoint initialization. ControlNet provides a simple script for you to achieve this easily. If your SD filename is `./ckpts/v1-5-pruned.ckpt` and you want the script to save the processed model (SD+ControlNet) at location `./ckpts/control_sd15_ini.ckpt`, you can just run:
@@ -84,6 +86,8 @@ python train_unicontrol.py --ckpt ./ckpts/unicontrol.ckpt  --config ./models/cld
 
 ### Model Inference (CUDA 11.0 and Conda 4.12.0 work)
 For different tasks, please run the code as follows. If you meet OOM error, please decrease the "--num_samples".
+
+If you use safetensors model, you can load the model following ./load_model/load_safetensors_model.py
 
 Canny to Image Generation:
 ```
