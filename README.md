@@ -315,7 +315,8 @@ python app/gradio_inpainting.py
 - [x] Pre-training Tasks Inference
 - [x] Gradio Demo
 - [x] Model Training
-- [ ] HF Space
+- [x] HF Space
+- [ ] Colab
 
 ## Tips
 * Negative prompts are very useful sometimes: `monochrome, lowres, bad anatomy, worst quality, low quality` are example negative prompts.
