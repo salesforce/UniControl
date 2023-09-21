@@ -35,6 +35,7 @@ We introduce **UniControl**, a new generative foundation model that consolidates
 * **07/06/23**: ***Latest UniControl model v1.1 [checkpoint](https://console.cloud.google.com/storage/browser/_details/sfr-unicontrol-data-research/unicontrol_v1.1.ckpt) updated which supports 12 tasks now (***Canny***, ***HED***, ***Sketch***, ***Depth***, ***Normal***, ***Skeleton***, ***Bbox***, ***Seg***, ***Outpainting***, ***Inpainting***, ***Deblurring*** and ***Colorization***) !***
 * **07/25/23**: ***Huggingface Demo API is available! [![HuggingFace space](https://img.shields.io/badge/🤗-Huggingface%20Space-cyan.svg)](https://huggingface.co/spaces/Robert001/UniControl-Demo)***
 * **07/25/23**: ***Safetensors model is available! [checkpoint](https://storage.googleapis.com/sfr-unicontrol-data-research/unicontrol_v1.1.st)***
+* * **09/21/23**: ***UniControl is accepted to NeurIPS 2023.***:blush:
 
 
 ## MultiGen-20M Datasets
