@@ -436,7 +436,7 @@ class ControlLDM(LatentDiffusion):
         batch['txt'] = batch['txt'] + [self.mapping_task[task_name]]
         
         x, c_all = super().get_input(batch, self.first_stage_key, *args, **kwargs)
-        c, c_task = c_all[:BS,:,:], c_all[BS:,:1,:]
+        c, c_task = c_all[:BS,:,:], c_all[BS:BS+1,:1,:]
         control = batch[self.control_key]
         if bs is not None:
             control = control[:bs]
